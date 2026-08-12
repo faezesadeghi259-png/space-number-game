@@ -4,2098 +4,2692 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>بازی فضایی ریاضی | Teacher Sadeghi</title>
+<title>مأموریت کهکشانی اعداد | Teacher Sadeghi</title>
 
 <style>
+
+/* =========================
+   RESET
+========================= */
+
 *{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
-html,body{
-  margin:0;
-  width:100%;
-  min-height:100%;
+html,
+body{
+    width:100%;
+    height:100%;
+    margin:0;
 }
 
 body{
-  min-height:100vh;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:10px;
+    overflow:hidden;
+    font-family:
+        Tahoma,
+        Arial,
+        sans-serif;
 
-  font-family:
-    Tahoma,
-    Arial,
-    sans-serif;
+    background:
+        radial-gradient(
+            circle at 50% 20%,
+            #17276e 0%,
+            #090b36 30%,
+            #03051c 65%,
+            #01020c 100%
+        );
 
-  color:#fff;
-
-  background:
-    radial-gradient(circle at 20% 10%,rgba(48,113,255,.30),transparent 22%),
-    radial-gradient(circle at 80% 30%,rgba(169,48,255,.24),transparent 25%),
-    radial-gradient(circle at 50% 100%,rgba(0,221,255,.13),transparent 28%),
-    linear-gradient(145deg,#020617,#08052c 45%,#02030f);
+    color:white;
 }
 
-/* ستاره‌های زمینه */
 
-body::before,
-body::after{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
+/* =========================
+   GALAXY BACKGROUND
+========================= */
+
+.space{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
 }
 
-body::before{
-  background-image:
-    radial-gradient(circle,rgba(255,255,255,.95) 0 1px,transparent 1.5px),
-    radial-gradient(circle,rgba(113,216,255,.8) 0 1px,transparent 1.6px),
-    radial-gradient(circle,rgba(255,205,92,.75) 0 1.2px,transparent 1.7px);
+.space::before{
+    content:"";
+    position:absolute;
+    inset:-30%;
 
-  background-size:
-    83px 79px,
-    137px 131px,
-    191px 183px;
+    background:
+        radial-gradient(
+            ellipse at 20% 30%,
+            rgba(69,127,255,.28),
+            transparent 28%
+        ),
+        radial-gradient(
+            ellipse at 80% 65%,
+            rgba(177,58,255,.22),
+            transparent 30%
+        ),
+        radial-gradient(
+            ellipse at 50% 100%,
+            rgba(0,217,255,.13),
+            transparent 28%
+        );
 
-  background-position:
-    12px 20px,
-    60px 80px,
-    30px 45px;
+    filter:blur(20px);
 
-  opacity:.65;
-  animation:starMove 18s linear infinite;
+    animation:
+        nebulaMove 12s ease-in-out infinite alternate;
 }
 
-body::after{
-  background:
-    radial-gradient(circle at 30% 40%,rgba(79,193,255,.08),transparent 18%),
-    radial-gradient(circle at 70% 60%,rgba(180,80,255,.07),transparent 20%);
-  animation:nebula 7s ease-in-out infinite alternate;
+.stars-layer{
+    position:absolute;
+    inset:0;
+
+    background-image:
+        radial-gradient(circle,#fff 0 1px,transparent 1.6px),
+        radial-gradient(circle,#9eeaff 0 1px,transparent 1.6px),
+        radial-gradient(circle,#ffd86b 0 1px,transparent 1.7px);
+
+    background-size:
+        73px 71px,
+        131px 127px,
+        193px 189px;
+
+    background-position:
+        10px 20px,
+        45px 70px,
+        80px 120px;
+
+    opacity:.72;
+
+    animation:
+        starsMove 25s linear infinite;
 }
 
-/* قاب اصلی */
+
+/* =========================
+   GAME CONTAINER
+========================= */
 
 .game{
-  width:100%;
-  max-width:600px;
-  height:min(850px,96vh);
+    position:relative;
 
-  position:relative;
-  overflow:hidden;
+    width:min(650px,100vw);
+    height:min(900px,100vh);
 
-  border-radius:34px;
+    margin:auto;
 
-  border:1px solid rgba(136,216,255,.55);
+    overflow:hidden;
 
-  background:
-    radial-gradient(circle at 50% 10%,rgba(48,107,255,.28),transparent 30%),
-    radial-gradient(circle at 20% 80%,rgba(170,44,255,.18),transparent 28%),
-    linear-gradient(180deg,#07143f,#100632 65%,#030414);
+    background:
+        linear-gradient(
+            180deg,
+            rgba(5,10,45,.30),
+            rgba(4,3,25,.65)
+        );
 
-  box-shadow:
-    0 0 20px rgba(52,182,255,.35),
-    0 0 70px rgba(77,67,255,.20),
-    inset 0 0 70px rgba(83,115,255,.12);
+    border:
+        1px solid rgba(123,219,255,.42);
 
-  isolation:isolate;
+    box-shadow:
+        0 0 50px rgba(54,130,255,.25),
+        inset 0 0 70px rgba(72,94,255,.12);
+
+    isolation:isolate;
 }
 
-/* نور بالای بازی */
 
-.game::before{
-  content:"";
-  position:absolute;
-  width:330px;
-  height:330px;
-  left:50%;
-  top:-210px;
-  transform:translateX(-50%);
+/* =========================
+   DECORATIVE SPACE OBJECTS
+========================= */
 
-  background:radial-gradient(circle,
-    rgba(70,194,255,.35),
-    rgba(70,100,255,.12) 40%,
-    transparent 70%
-  );
-
-  filter:blur(5px);
-  pointer-events:none;
+.planet{
+    position:absolute;
+    border-radius:50%;
+    z-index:1;
 }
 
-/* ستاره‌های متحرک */
+.planet.one{
+    width:125px;
+    height:125px;
 
-.star{
-  position:absolute;
-  z-index:1;
-  color:#fff;
-  pointer-events:none;
-  animation:
-    twinkle 1.8s ease-in-out infinite alternate,
-    drift 5s ease-in-out infinite alternate;
+    right:-48px;
+    bottom:-30px;
+
+    background:
+        radial-gradient(
+            circle at 30% 25%,
+            #ffd48a 0 8%,
+            transparent 9%
+        ),
+        radial-gradient(
+            circle at 35% 30%,
+            #ff9b61,
+            #d14d43 42%,
+            #67204f 72%,
+            #24103e
+        );
+
+    box-shadow:
+        inset -18px -20px 30px rgba(0,0,0,.55),
+        0 0 35px rgba(255,93,90,.28);
 }
 
-.star1{top:35px;left:7%;font-size:18px}
-.star2{top:80px;right:9%;font-size:12px;animation-delay:.4s}
-.star3{top:180px;left:13%;font-size:25px;animation-delay:.8s}
-.star4{top:255px;right:7%;font-size:16px;animation-delay:.2s}
-.star5{top:380px;left:6%;font-size:12px;animation-delay:1s}
-.star6{top:480px;right:12%;font-size:23px;animation-delay:.5s}
-.star7{top:610px;left:9%;font-size:15px;animation-delay:.7s}
-.star8{top:690px;right:8%;font-size:12px;animation-delay:1.2s}
+.planet.two{
+    width:70px;
+    height:70px;
 
-/* سیاره بزرگ */
+    left:-18px;
+    top:125px;
 
-.planet-big{
-  position:absolute;
-  width:145px;
-  height:145px;
-  right:-55px;
-  bottom:-35px;
+    background:
+        radial-gradient(
+            circle at 30% 25%,
+            #a5f8ff,
+            #4ca7ed 42%,
+            #24357f 75%,
+            #111538
+        );
 
-  border-radius:50%;
+    box-shadow:
+        inset -10px -12px 18px rgba(0,0,0,.4),
+        0 0 30px rgba(63,207,255,.42);
 
-  background:
-    radial-gradient(circle at 30% 25%,#ffd08a 0 8%,transparent 9%),
-    radial-gradient(circle at 35% 30%,#ffb66c,#d85a3a 38%,#73285b 70%,#281443);
-
-  box-shadow:
-    inset -18px -20px 35px rgba(0,0,0,.5),
-    0 0 40px rgba(255,98,98,.25);
-
-  z-index:1;
+    animation:
+        planetFloat 4s ease-in-out infinite;
 }
 
-/* سیاره آبی */
+.planet.three{
+    width:45px;
+    height:45px;
 
-.planet-blue{
-  position:absolute;
-  width:58px;
-  height:58px;
-  left:20px;
-  top:105px;
+    right:12%;
+    top:220px;
 
-  border-radius:50%;
+    background:
+        radial-gradient(
+            circle at 30% 25%,
+            #e9b7ff,
+            #9256d9 50%,
+            #33145d
+        );
 
-  background:
-    radial-gradient(circle at 30% 25%,#a4f5ff,#3e9de8 40%,#24317f 72%,#11163e);
+    box-shadow:
+        0 0 25px rgba(190,95,255,.4);
 
-  box-shadow:
-    inset -8px -10px 15px rgba(0,0,0,.35),
-    0 0 28px rgba(62,202,255,.45);
-
-  z-index:1;
-
-  animation:planetFloat 4s ease-in-out infinite;
+    animation:
+        planetFloat 5s ease-in-out infinite reverse;
 }
 
-/* سیاره حلقه‌دار */
+.ring{
+    position:absolute;
 
-.ring-planet{
-  position:absolute;
-  width:150px;
-  height:42px;
-  right:-65px;
-  bottom:13px;
+    width:180px;
+    height:42px;
 
-  border:5px solid rgba(255,207,92,.72);
-  border-radius:50%;
+    right:-72px;
+    bottom:20px;
 
-  transform:rotate(-18deg);
+    border:
+        5px solid rgba(255,212,93,.65);
 
-  box-shadow:
-    0 0 12px rgba(255,203,70,.45);
+    border-radius:50%;
 
-  z-index:2;
+    transform:rotate(-18deg);
+
+    box-shadow:
+        0 0 16px rgba(255,210,85,.3);
+
+    z-index:2;
 }
-
-/* شهاب */
 
 .meteor{
-  position:absolute;
-  width:85px;
-  height:3px;
-  border-radius:50%;
-  background:linear-gradient(90deg,transparent,#fff,#67dcff);
+    position:absolute;
 
-  transform:rotate(-28deg);
+    width:100px;
+    height:3px;
 
-  opacity:.65;
-  z-index:1;
+    border-radius:50%;
 
-  animation:meteor 7s linear infinite;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #fff,
+            #61dfff
+        );
+
+    transform:rotate(-30deg);
+
+    opacity:.8;
+
+    z-index:2;
+
+    animation:
+        meteorFly 7s linear infinite;
 }
 
-.meteor1{
-  top:160px;
-  right:-100px;
+.meteor.one{
+    top:20%;
+    right:-120px;
 }
 
-.meteor2{
-  top:430px;
-  left:-100px;
-  animation-delay:3s;
+.meteor.two{
+    top:60%;
+    left:-120px;
+
+    animation-delay:3s;
 }
 
-/* صفحه شروع */
 
-.start-screen{
-  position:absolute;
-  inset:0;
-  z-index:20;
+/* =========================
+   FLOATING STARS
+========================= */
 
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
+.star{
+    position:absolute;
 
-  padding:28px 22px;
+    z-index:2;
 
-  text-align:center;
+    color:white;
 
-  background:
-    radial-gradient(circle at 50% 18%,rgba(69,157,255,.28),transparent 28%),
-    radial-gradient(circle at 20% 70%,rgba(157,48,255,.18),transparent 25%),
-    linear-gradient(180deg,rgba(3,7,32,.96),rgba(12,5,40,.98));
+    animation:
+        twinkle 1.6s ease-in-out infinite alternate;
 }
 
-.start-screen.hidden{
-  display:none;
+.s1{top:7%;left:8%;font-size:22px}
+.s2{top:14%;right:10%;font-size:15px;animation-delay:.3s}
+.s3{top:28%;left:12%;font-size:13px;animation-delay:.7s}
+.s4{top:36%;right:7%;font-size:25px;animation-delay:.2s}
+.s5{top:51%;left:7%;font-size:17px;animation-delay:1s}
+.s6{top:67%;right:8%;font-size:14px;animation-delay:.5s}
+.s7{top:78%;left:10%;font-size:24px;animation-delay:.9s}
+.s8{top:87%;right:14%;font-size:13px;animation-delay:.1s}
+
+
+/* =========================
+   ALL SCREENS
+========================= */
+
+.screen{
+    position:absolute;
+    inset:0;
+
+    z-index:10;
+
+    display:none;
+
+    flex-direction:column;
+    align-items:center;
+
+    text-align:center;
+
+    padding:30px 22px;
 }
 
-/* سفینه */
-
-.rocket{
-  font-size:76px;
-  line-height:1;
-
-  filter:
-    drop-shadow(0 0 10px #5adfff)
-    drop-shadow(0 0 25px rgba(65,135,255,.8));
-
-  animation:
-    rocketFloat 2.6s ease-in-out infinite;
-
-  margin-bottom:8px;
+.screen.active{
+    display:flex;
 }
 
-/* عنوان */
 
-.game-title{
-  margin:4px 0 5px;
+/* =========================
+   START SCREEN
+========================= */
 
-  font-size:32px;
-  font-weight:900;
-  line-height:1.45;
+#startScreen{
+    justify-content:center;
 
-  color:#fff;
-
-  text-shadow:
-    0 0 8px #49d7ff,
-    0 0 22px rgba(63,139,255,.8);
+    background:
+        radial-gradient(
+            circle at 50% 18%,
+            rgba(64,160,255,.22),
+            transparent 30%
+        );
 }
 
-.game-subtitle{
-  font-size:17px;
-  color:#a9edff;
-  font-weight:bold;
-  margin-bottom:18px;
+.main-rocket{
+    font-size:82px;
+
+    margin-bottom:5px;
+
+    filter:
+        drop-shadow(0 0 8px #55e4ff)
+        drop-shadow(0 0 25px #397cff);
+
+    animation:
+        rocketFloat 2.5s ease-in-out infinite;
 }
 
-/* Teacher Sadeghi */
+.title{
+    font-size:34px;
+    font-weight:900;
+
+    line-height:1.4;
+
+    color:white;
+
+    text-shadow:
+        0 0 8px #51dcff,
+        0 0 25px rgba(65,124,255,.8);
+
+    margin:0 0 7px;
+}
+
+.subtitle{
+    color:#9deaff;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    margin-bottom:12px;
+}
 
 .teacher{
-  direction:ltr;
+    direction:ltr;
 
-  font-family:
-    "Trebuchet MS",
-    Arial,
-    sans-serif;
+    font-family:
+        "Trebuchet MS",
+        Arial,
+        sans-serif;
 
-  font-size:18px;
-  font-weight:800;
-  letter-spacing:1.5px;
+    font-size:19px;
 
-  color:#dff9ff;
+    font-weight:900;
 
-  text-shadow:
-    0 0 7px #4ddcff,
-    0 0 15px rgba(77,180,255,.65);
+    letter-spacing:1.5px;
 
-  margin-bottom:16px;
+    color:#e0fbff;
+
+    text-shadow:
+        0 0 8px #49d9ff,
+        0 0 18px #398aff;
+
+    margin-bottom:18px;
 }
 
-/* کارت شروع */
 
-.start-card{
-  width:100%;
-  max-width:470px;
+/* =========================
+   GLASS CARD
+========================= */
 
-  padding:19px;
+.card{
+    width:100%;
+    max-width:500px;
 
-  border-radius:26px;
+    padding:22px;
 
-  border:1px solid rgba(119,218,255,.45);
+    border-radius:30px;
 
-  background:
-    linear-gradient(
-      135deg,
-      rgba(23,47,108,.62),
-      rgba(45,17,93,.56)
-    );
+    border:
+        1px solid rgba(133,220,255,.5);
 
-  box-shadow:
-    inset 0 0 25px rgba(98,152,255,.08),
-    0 0 30px rgba(55,137,255,.18);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(17,40,92,.72),
+            rgba(53,17,91,.68)
+        );
 
-  backdrop-filter:blur(12px);
+    box-shadow:
+        0 0 35px rgba(62,147,255,.18),
+        inset 0 0 30px rgba(96,152,255,.08);
+
+    backdrop-filter:blur(15px);
 }
 
-/* عنوان بخش */
+.card-title{
+    font-size:23px;
 
-.section-title{
-  font-size:21px;
-  font-weight:900;
-  color:#75e6ff;
-  margin-bottom:11px;
+    font-weight:900;
+
+    color:#72eaff;
+
+    margin-bottom:12px;
 }
 
-/* توضیحات */
+.description{
+    font-size:15px;
 
-.instructions{
-  font-size:15px;
-  line-height:2.05;
-  color:#f0f8ff;
-  margin:0 0 15px;
+    line-height:2;
+
+    color:#f1f8ff;
+
+    margin:0 0 17px;
 }
 
-.instructions strong{
-  color:#ffd95a;
+.description strong{
+    color:#ffd75c;
 }
 
-/* ورودی نام */
 
-.name-label{
-  display:block;
-  font-size:16px;
-  font-weight:bold;
-  color:#d9f8ff;
-  margin-bottom:8px;
+/* =========================
+   NAME INPUT
+========================= */
+
+.label{
+    display:block;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    color:#dff9ff;
+
+    margin-bottom:8px;
 }
 
 .name-input{
-  width:100%;
-  height:55px;
+    width:100%;
 
-  border-radius:17px;
+    height:58px;
 
-  border:2px solid rgba(86,214,255,.55);
+    border-radius:18px;
 
-  outline:none;
+    border:
+        2px solid rgba(79,211,255,.52);
 
-  padding:0 17px;
+    background:
+        rgba(2,10,40,.8);
 
-  text-align:center;
+    color:white;
 
-  font-family:Tahoma,Arial,sans-serif;
-  font-size:18px;
-  font-weight:bold;
+    outline:none;
 
-  color:#fff;
+    padding:0 16px;
 
-  background:rgba(3,12,45,.75);
+    text-align:center;
 
-  box-shadow:
-    inset 0 0 15px rgba(0,0,0,.2),
-    0 0 15px rgba(54,180,255,.08);
-}
+    font-family:Tahoma,Arial,sans-serif;
 
-.name-input::placeholder{
-  color:#8fa9c5;
+    font-size:18px;
+
+    font-weight:bold;
+
+    box-shadow:
+        inset 0 0 15px rgba(0,0,0,.3);
 }
 
 .name-input:focus{
-  border-color:#65e7ff;
+    border-color:#62e8ff;
 
-  box-shadow:
-    0 0 0 3px rgba(74,214,255,.12),
-    0 0 24px rgba(60,210,255,.28);
+    box-shadow:
+        0 0 0 3px rgba(72,220,255,.12),
+        0 0 25px rgba(72,210,255,.25);
 }
 
-/* دکمه شروع */
-
-.start-button{
-  width:100%;
-  height:62px;
-
-  margin-top:15px;
-
-  border:0;
-  border-radius:20px;
-
-  cursor:pointer;
-
-  font-family:Tahoma,Arial,sans-serif;
-  font-size:21px;
-  font-weight:900;
-
-  color:#fff;
-
-  background:
-    linear-gradient(
-      100deg,
-      #087fc5,
-      #6450ff,
-      #a63dff
-    );
-
-  box-shadow:
-    0 7px 0 #27216c,
-    0 0 25px rgba(90,125,255,.4);
-
-  transition:.18s;
-
-  position:relative;
-  overflow:hidden;
+.name-input::placeholder{
+    color:#8ba8c6;
 }
 
-.start-button::before{
-  content:"";
-  position:absolute;
-  top:0;
-  left:-100%;
-  width:60%;
-  height:100%;
 
-  background:linear-gradient(
-    90deg,
-    transparent,
-    rgba(255,255,255,.3),
-    transparent
-  );
+/* =========================
+   BUTTON
+========================= */
 
-  transform:skewX(-20deg);
+.primary{
+    width:100%;
 
-  animation:buttonShine 3s infinite;
+    height:62px;
+
+    margin-top:16px;
+
+    border:0;
+
+    border-radius:20px;
+
+    cursor:pointer;
+
+    font-family:Tahoma,Arial,sans-serif;
+
+    font-size:20px;
+
+    font-weight:900;
+
+    color:white;
+
+    background:
+        linear-gradient(
+            100deg,
+            #0786ca,
+            #604eff,
+            #aa43ff
+        );
+
+    box-shadow:
+        0 7px 0 #27205f,
+        0 0 25px rgba(92,122,255,.38);
+
+    transition:.18s;
 }
 
-.start-button:active{
-  transform:translateY(5px);
-  box-shadow:0 2px 0 #27216c;
+.primary:active{
+    transform:translateY(5px);
+
+    box-shadow:
+        0 2px 0 #27205f;
 }
 
-/* هدر بازی */
 
-.header{
-  height:145px;
+/* =========================
+   INSTRUCTION SCREEN
+========================= */
 
-  position:relative;
-  z-index:5;
-
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
+#instructionScreen{
+    justify-content:center;
 }
 
-.header-rocket{
-  font-size:52px;
+.instruction-rocket{
+    font-size:70px;
 
-  filter:
-    drop-shadow(0 0 8px #4fdfff)
-    drop-shadow(0 0 18px #457dff);
+    filter:
+        drop-shadow(0 0 15px #53dcff);
 
-  animation:rocketFloat 2.5s ease-in-out infinite;
+    animation:
+        rocketFloat 2.5s infinite;
 }
 
-.logo{
-  direction:ltr;
+.welcome{
+    font-size:28px;
 
-  font-family:
-    "Trebuchet MS",
-    Arial,
-    sans-serif;
+    font-weight:900;
 
-  font-size:20px;
-  font-weight:900;
+    color:#ffd95b;
 
-  letter-spacing:1.5px;
+    text-shadow:
+        0 0 15px #ff9d32;
 
-  color:#a8efff;
-
-  text-shadow:
-    0 0 7px #39c9ff,
-    0 0 18px #247dff;
-
-  margin-top:5px;
+    margin:5px 0 18px;
 }
 
-/* صفحه بازی */
+.steps{
+    width:100%;
 
-.screen{
-  position:relative;
-  z-index:4;
+    max-width:500px;
 
-  padding:0 20px 18px;
+    display:flex;
 
-  height:calc(100% - 145px);
+    flex-direction:column;
 
-  display:flex;
-  flex-direction:column;
+    gap:11px;
 }
 
-/* اطلاعات دانش آموز */
+.step{
+    display:flex;
 
-.player-name{
-  text-align:center;
+    align-items:center;
 
-  margin-bottom:10px;
+    gap:12px;
 
-  color:#d7f8ff;
+    text-align:right;
 
-  font-size:16px;
-  font-weight:bold;
+    padding:13px 15px;
+
+    border-radius:18px;
+
+    background:
+        rgba(11,29,73,.72);
+
+    border:
+        1px solid rgba(95,200,255,.28);
+
+    font-size:15px;
+
+    line-height:1.7;
 }
 
-.player-name span{
-  color:#ffd85a;
+.step-icon{
+    min-width:42px;
+
+    height:42px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #176fba,
+            #653bca
+        );
+
+    font-size:22px;
 }
 
-/* نوار پیشرفت */
+.ready{
+    color:#aeefff;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    margin:17px 0 2px;
+}
+
+
+/* =========================
+   GAME SCREEN
+========================= */
+
+#gameScreen{
+    padding:
+        24px 20px 20px;
+
+    justify-content:flex-start;
+}
+
+.game-top{
+    width:100%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:8px;
+
+    margin-bottom:12px;
+}
+
+.player{
+    padding:8px 13px;
+
+    border-radius:18px;
+
+    background:
+        rgba(23,53,109,.7);
+
+    border:
+        1px solid rgba(87,203,255,.3);
+
+    color:#dff9ff;
+
+    font-size:14px;
+
+    font-weight:bold;
+}
+
+.player span{
+    color:#ffd75a;
+}
+
+.score-box{
+    padding:8px 13px;
+
+    border-radius:18px;
+
+    background:
+        rgba(255,208,72,.12);
+
+    border:
+        1px solid rgba(255,208,72,.35);
+
+    color:#ffd75a;
+
+    font-size:14px;
+
+    font-weight:900;
+}
 
 .progress{
-  height:10px;
+    width:100%;
 
-  background:rgba(255,255,255,.10);
+    height:10px;
 
-  border-radius:20px;
+    background:
+        rgba(255,255,255,.1);
 
-  overflow:hidden;
+    border-radius:20px;
 
-  margin-bottom:14px;
+    overflow:hidden;
 
-  border:1px solid rgba(108,196,255,.16);
+    margin-bottom:17px;
 }
 
 .progress-bar{
-  height:100%;
-  width:10%;
+    width:10%;
 
-  background:
-    linear-gradient(
-      90deg,
-      #26dfff,
-      #7868ff,
-      #ff7bc7
-    );
+    height:100%;
 
-  box-shadow:
-    0 0 12px #49d8ff;
+    border-radius:20px;
 
-  transition:.45s;
+    background:
+        linear-gradient(
+            90deg,
+            #22ddff,
+            #725aff,
+            #ff72c8
+        );
+
+    box-shadow:
+        0 0 15px #4bdfff;
+
+    transition:.5s;
 }
 
-/* سؤال */
 
-.question-box{
-  background:
-    linear-gradient(
-      135deg,
-      rgba(8,24,76,.88),
-      rgba(34,10,68,.78)
-    );
+/* =========================
+   SPACE MISSION PANEL
+========================= */
 
-  border:2px solid rgba(99,200,255,.40);
+.question-card{
+    width:100%;
 
-  border-radius:26px;
+    padding:24px 15px;
 
-  padding:22px 12px;
+    border-radius:28px;
 
-  text-align:center;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(8,26,78,.88),
+            rgba(42,10,75,.82)
+        );
 
-  box-shadow:
-    0 0 25px rgba(38,127,255,.15),
-    inset 0 0 25px rgba(90,120,255,.08);
+    border:
+        2px solid rgba(90,205,255,.38);
 
-  margin-bottom:18px;
+    box-shadow:
+        0 0 30px rgba(52,137,255,.16),
+        inset 0 0 25px rgba(100,120,255,.08);
+
+    margin-bottom:19px;
 }
 
 .mission{
-  font-size:15px;
-  color:#82eaff;
+    color:#78e9ff;
 
-  margin-bottom:9px;
+    font-size:15px;
 
-  font-weight:900;
+    font-weight:900;
+
+    margin-bottom:10px;
 }
 
 .question{
-  font-size:29px;
+    font-size:29px;
 
-  font-weight:900;
+    line-height:1.8;
 
-  line-height:1.8;
-
-  text-shadow:
-    0 0 12px rgba(92,206,255,.45);
+    font-weight:900;
 }
 
 .question strong{
-  color:#ffd95a;
+    color:#ffd85a;
 
-  font-size:36px;
+    font-size:38px;
 
-  text-shadow:
-    0 0 12px rgba(255,205,80,.6);
+    text-shadow:
+        0 0 14px rgba(255,211,74,.65);
 }
 
-/* گزینه‌ها */
 
-.options{
-  display:flex;
+/* =========================
+   ANSWERS
+========================= */
 
-  gap:12px;
+.answers{
+    width:100%;
 
-  direction:rtl;
+    display:flex;
+
+    gap:13px;
 }
 
 .answer{
-  flex:1;
+    flex:1;
 
-  min-width:0;
+    height:100px;
 
-  height:88px;
+    border-radius:25px;
 
-  border-radius:22px;
+    border:2px solid;
 
-  font-family:Tahoma,Arial,sans-serif;
+    color:white;
 
-  font-size:30px;
+    font-family:Tahoma,Arial,sans-serif;
 
-  font-weight:900;
+    font-size:34px;
 
-  cursor:pointer;
+    font-weight:900;
 
-  color:white;
+    cursor:pointer;
 
-  transition:.15s;
-
-  touch-action:manipulation;
+    transition:.15s;
 }
 
-.answer:first-child{
-  background:
-    linear-gradient(145deg,#087dc0,#123d9c);
+.answer.blue{
+    background:
+        linear-gradient(
+            145deg,
+            #087fc3,
+            #183d9c
+        );
 
-  border:2px solid #4ddaff;
+    border-color:#51ddff;
 
-  box-shadow:
-    0 7px 0 #062d68,
-    0 0 18px rgba(50,210,255,.25);
+    box-shadow:
+        0 7px 0 #062e68,
+        0 0 20px rgba(50,210,255,.22);
 }
 
-.answer:last-child{
-  background:
-    linear-gradient(145deg,#e76a24,#a92d59);
+.answer.pink{
+    background:
+        linear-gradient(
+            145deg,
+            #e66a29,
+            #a72b59
+        );
 
-  border:2px solid #ffad61;
+    border-color:#ffb060;
 
-  box-shadow:
-    0 7px 0 #651d43,
-    0 0 18px rgba(255,120,70,.25);
+    box-shadow:
+        0 7px 0 #651e42,
+        0 0 20px rgba(255,120,70,.2);
 }
 
 .answer:active{
-  transform:translateY(6px);
-  box-shadow:0 2px 0 rgba(0,0,0,.5);
+    transform:translateY(6px);
+
+    box-shadow:
+        0 2px 0 rgba(0,0,0,.5);
 }
 
 .answer.correct{
-  background:
-    linear-gradient(145deg,#18c878,#087d61)!important;
+    background:
+        linear-gradient(
+            145deg,
+            #19cb79,
+            #087b60
+        ) !important;
 
-  border-color:#7dffbc!important;
+    border-color:#83ffc1 !important;
 
-  box-shadow:
-    0 0 25px #29ef9b!important;
+    box-shadow:
+        0 0 30px #2af09e !important;
 
-  animation:correctPulse .6s ease;
+    animation:
+        correct .6s ease;
 }
 
 .answer.wrong{
-  background:
-    linear-gradient(145deg,#d83252,#721b49)!important;
+    background:
+        linear-gradient(
+            145deg,
+            #db3555,
+            #701d4a
+        ) !important;
 
-  border-color:#ff8498!important;
+    border-color:#ff899c !important;
 
-  box-shadow:
-    0 0 20px #ff315d!important;
-
-  animation:shake .4s ease;
+    animation:
+        shake .4s ease;
 }
 
-/* بازخورد */
+
+/* =========================
+   FEEDBACK
+========================= */
 
 .feedback{
-  min-height:60px;
+    min-height:62px;
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
+    display:flex;
 
-  text-align:center;
+    align-items:center;
 
-  font-size:19px;
+    justify-content:center;
 
-  font-weight:900;
+    font-size:18px;
+
+    font-weight:900;
+
+    line-height:1.7;
 }
 
 .good{
-  color:#6dffb0;
+    color:#6dffb0;
 
-  text-shadow:
-    0 0 10px #27ff9b;
+    text-shadow:
+        0 0 12px #25ff99;
 }
 
 .bad{
-  color:#ff91a5;
+    color:#ff91a6;
 
-  text-shadow:
-    0 0 10px #ff355e;
+    text-shadow:
+        0 0 12px #ff315c;
 }
-
-/* دکمه سؤال بعد */
 
 .next{
-  display:none;
+    display:none;
 
-  width:100%;
+    width:100%;
 
-  height:55px;
+    height:55px;
 
-  border:0;
+    border:0;
 
-  border-radius:18px;
+    border-radius:18px;
 
-  font-family:Tahoma,Arial,sans-serif;
+    background:
+        linear-gradient(
+            90deg,
+            #684cff,
+            #ad48ff
+        );
 
-  font-size:18px;
+    color:white;
 
-  font-weight:900;
+    font-family:Tahoma,Arial,sans-serif;
 
-  color:#fff;
+    font-size:18px;
 
-  background:
-    linear-gradient(
-      90deg,
-      #684eff,
-      #ae4cff
-    );
+    font-weight:900;
 
-  box-shadow:
-    0 5px 0 #38258d,
-    0 0 20px rgba(135,77,255,.25);
+    cursor:pointer;
 
-  cursor:pointer;
+    box-shadow:
+        0 5px 0 #38258c;
 }
 
-/* امتیاز */
 
-.score{
-  margin-top:auto;
+/* =========================
+   END SCREEN
+========================= */
 
-  text-align:center;
+#endScreen{
+    justify-content:center;
 
-  padding-top:10px;
-}
-
-.score span{
-  display:inline-block;
-
-  padding:8px 18px;
-
-  border-radius:20px;
-
-  background:rgba(255,211,75,.12);
-
-  border:1px solid rgba(255,211,75,.35);
-
-  color:#ffd85a;
-
-  font-weight:900;
-
-  box-shadow:0 0 15px rgba(255,205,75,.08);
-}
-
-/* صفحه پایان */
-
-.end{
-  display:none;
-
-  position:absolute;
-  inset:0;
-
-  z-index:30;
-
-  background:
-    radial-gradient(circle at 50% 30%,rgba(71,75,190,.45),transparent 30%),
-    linear-gradient(180deg,#05082a,#12052d);
-
-  align-items:center;
-  justify-content:center;
-
-  flex-direction:column;
-
-  text-align:center;
-
-  padding:25px;
+    background:
+        radial-gradient(
+            circle at 50% 30%,
+            rgba(73,83,203,.4),
+            transparent 30%
+        );
 }
 
 .trophy{
-  font-size:82px;
+    font-size:92px;
 
-  filter:
-    drop-shadow(0 0 18px #ffd84d);
+    filter:
+        drop-shadow(0 0 22px #ffd84d);
 
-  animation:bounce 1s infinite;
+    animation:
+        trophyBounce 1s infinite;
 }
 
-.end h2{
-  font-size:30px;
+.end-title{
+    font-size:31px;
 
-  margin:10px 0;
+    font-weight:900;
 
-  color:#ffd85a;
+    color:#ffd85a;
 
-  text-shadow:
-    0 0 15px #ff9d2e;
+    text-shadow:
+        0 0 16px #ff9d32;
+
+    margin:12px 0;
 }
 
-.final{
-  font-size:24px;
+.end-name{
+    color:#9deaff;
 
-  font-weight:900;
+    font-size:19px;
 
-  color:#fff;
+    font-weight:bold;
 
-  margin:8px 0 15px;
+    margin-bottom:7px;
 }
 
-.final span{
-  color:#ffd85a;
+.final-score{
+    font-size:27px;
+
+    font-weight:900;
+
+    margin-bottom:13px;
 }
 
-.message{
-  font-size:18px;
-
-  line-height:2;
-
-  color:#aeeaff;
-
-  margin-bottom:20px;
+.final-score span{
+    color:#ffd85a;
 }
 
-.restart{
-  border:0;
+.end-message{
+    font-size:18px;
 
-  border-radius:20px;
+    line-height:2;
 
-  padding:15px 30px;
+    color:#b4ecff;
 
-  font-family:Tahoma,Arial,sans-serif;
-
-  font-size:18px;
-
-  font-weight:900;
-
-  color:#fff;
-
-  background:
-    linear-gradient(
-      90deg,
-      #087dc0,
-      #7254ff
-    );
-
-  box-shadow:
-    0 6px 0 #173078;
-
-  cursor:pointer;
+    margin-bottom:22px;
 }
 
-/* کنفتی */
+
+/* =========================
+   CONFETTI
+========================= */
 
 .confetti{
-  position:fixed;
+    position:fixed;
 
-  top:-30px;
+    top:-40px;
 
-  font-size:25px;
+    z-index:100;
 
-  z-index:100;
+    font-size:25px;
 
-  animation:fall 3s linear forwards;
+    pointer-events:none;
 
-  pointer-events:none;
+    animation:
+        fall 3.5s linear forwards;
 }
 
-/* انیمیشن‌ها */
 
-@keyframes starMove{
-  from{
-    transform:translateY(0);
-  }
+/* =========================
+   ANIMATIONS
+========================= */
 
-  to{
-    transform:translateY(35px);
-  }
+@keyframes nebulaMove{
+    from{
+        transform:translate(0,0) scale(1);
+    }
+
+    to{
+        transform:translate(3%,2%) scale(1.08);
+    }
 }
 
-@keyframes nebula{
-  from{
-    opacity:.7;
-    transform:scale(1);
-  }
+@keyframes starsMove{
+    from{
+        transform:translateY(0);
+    }
 
-  to{
-    opacity:1;
-    transform:scale(1.06);
-  }
+    to{
+        transform:translateY(45px);
+    }
 }
 
 @keyframes twinkle{
-  from{
-    opacity:.25;
-    transform:scale(.75);
-  }
+    from{
+        opacity:.25;
+        transform:scale(.7);
+    }
 
-  to{
-    opacity:1;
-    transform:scale(1.25);
-  }
-}
-
-@keyframes drift{
-  from{
-    margin-top:0;
-  }
-
-  to{
-    margin-top:8px;
-  }
+    to{
+        opacity:1;
+        transform:scale(1.3);
+    }
 }
 
 @keyframes rocketFloat{
-  0%,100%{
-    transform:translateY(0) rotate(-2deg);
-  }
+    0%,100%{
+        transform:
+            translateY(0)
+            rotate(-2deg);
+    }
 
-  50%{
-    transform:translateY(-10px) rotate(2deg);
-  }
+    50%{
+        transform:
+            translateY(-12px)
+            rotate(2deg);
+    }
 }
 
 @keyframes planetFloat{
-  0%,100%{
-    transform:translateY(0);
-  }
+    0%,100%{
+        transform:translateY(0);
+    }
 
-  50%{
-    transform:translateY(-7px);
-  }
+    50%{
+        transform:translateY(-10px);
+    }
 }
 
-@keyframes meteor{
-  0%{
-    transform:translate(0,0) rotate(-28deg);
-    opacity:0;
-  }
+@keyframes meteorFly{
+    0%{
+        transform:
+            translate(0,0)
+            rotate(-30deg);
 
-  10%{
-    opacity:.8;
-  }
+        opacity:0;
+    }
 
-  40%{
-    opacity:.7;
-  }
+    10%{
+        opacity:.8;
+    }
 
-  100%{
-    transform:translate(-600px,260px) rotate(-28deg);
-    opacity:0;
-  }
+    70%{
+        opacity:.8;
+    }
+
+    100%{
+        transform:
+            translate(-700px,300px)
+            rotate(-30deg);
+
+        opacity:0;
+    }
 }
 
-@keyframes buttonShine{
-  0%{
-    left:-100%;
-  }
+@keyframes correct{
+    0%{
+        transform:scale(1);
+    }
 
-  35%,100%{
-    left:140%;
-  }
-}
+    50%{
+        transform:scale(1.07);
+    }
 
-@keyframes correctPulse{
-  0%{
-    transform:scale(1);
-  }
-
-  50%{
-    transform:scale(1.06);
-  }
-
-  100%{
-    transform:scale(1);
-  }
+    100%{
+        transform:scale(1);
+    }
 }
 
 @keyframes shake{
-  0%,100%{
-    transform:translateX(0);
-  }
+    0%,100%{
+        transform:translateX(0);
+    }
 
-  25%{
-    transform:translateX(-7px);
-  }
+    25%{
+        transform:translateX(-8px);
+    }
 
-  75%{
-    transform:translateX(7px);
-  }
+    75%{
+        transform:translateX(8px);
+    }
 }
 
-@keyframes bounce{
-  0%,100%{
-    transform:translateY(0);
-  }
+@keyframes trophyBounce{
+    0%,100%{
+        transform:translateY(0);
+    }
 
-  50%{
-    transform:translateY(-15px);
-  }
+    50%{
+        transform:translateY(-14px);
+    }
 }
 
 @keyframes fall{
-  to{
-    transform:translateY(110vh) rotate(500deg);
-    opacity:0;
-  }
+    to{
+        transform:
+            translateY(115vh)
+            rotate(600deg);
+
+        opacity:0;
+    }
 }
 
-/* موبایل */
 
-@media(max-width:430px){
+/* =========================
+   MOBILE
+========================= */
 
-  body{
-    padding:0;
-  }
+@media(max-width:500px){
 
-  .game{
-    width:100%;
-    height:100vh;
-    max-width:none;
-    border-radius:0;
-    border:0;
-  }
+    .game{
+        width:100vw;
+        height:100vh;
 
-  .start-screen{
-    padding:20px 15px;
-  }
+        border:0;
+    }
 
-  .rocket{
-    font-size:64px;
-  }
+    .screen{
+        padding-left:15px;
+        padding-right:15px;
+    }
 
-  .game-title{
-    font-size:26px;
-  }
+    .main-rocket{
+        font-size:67px;
+    }
 
-  .game-subtitle{
-    font-size:15px;
-  }
+    .title{
+        font-size:27px;
+    }
 
-  .start-card{
-    padding:16px;
-  }
+    .subtitle{
+        font-size:15px;
+    }
 
-  .instructions{
-    font-size:14px;
-    line-height:1.9;
-  }
+    .teacher{
+        font-size:17px;
+    }
 
-  .teacher{
-    font-size:16px;
-  }
+    .card{
+        padding:17px;
+        border-radius:25px;
+    }
 
-  .header{
-    height:135px;
-  }
+    .card-title{
+        font-size:20px;
+    }
 
-  .header-rocket{
-    font-size:46px;
-  }
+    .description{
+        font-size:14px;
+        line-height:1.9;
+    }
 
-  .logo{
-    font-size:17px;
-  }
+    .question{
+        font-size:24px;
+    }
 
-  .screen{
-    height:calc(100% - 135px);
-    padding:0 13px 14px;
-  }
+    .question strong{
+        font-size:32px;
+    }
 
-  .question{
-    font-size:24px;
-  }
+    .answer{
+        height:82px;
+        font-size:29px;
+    }
 
-  .question strong{
-    font-size:31px;
-  }
+    .trophy{
+        font-size:75px;
+    }
 
-  .answer{
-    height:76px;
-    font-size:26px;
-  }
-
-  .question-box{
-    padding:17px 8px;
-  }
-
-  .feedback{
-    min-height:55px;
-    font-size:17px;
-  }
-
+    .end-title{
+        font-size:27px;
+    }
 }
 
 @media(max-height:700px){
 
-  .start-screen{
-    justify-content:flex-start;
-    overflow-y:auto;
-  }
+    .screen{
+        padding-top:15px;
+        padding-bottom:15px;
+        overflow-y:auto;
+    }
 
-  .rocket{
-    font-size:55px;
-  }
+    .main-rocket{
+        font-size:55px;
+    }
 
-  .game-title{
-    font-size:24px;
-  }
+    .title{
+        font-size:24px;
+    }
 
-  .start-card{
-    padding:14px;
-  }
+    .subtitle{
+        margin-bottom:7px;
+    }
 
-  .instructions{
-    margin-bottom:9px;
-  }
+    .teacher{
+        margin-bottom:10px;
+    }
 
+    .card{
+        padding:14px;
+    }
+
+    .description{
+        margin-bottom:9px;
+    }
+
+    .primary{
+        height:54px;
+    }
 }
+
 </style>
 </head>
 
+
 <body>
+
+<!-- =========================
+     SPACE BACKGROUND
+========================= -->
+
+<div class="space">
+
+    <div class="stars-layer"></div>
+
+    <div class="planet one"></div>
+    <div class="planet two"></div>
+    <div class="planet three"></div>
+
+    <div class="ring"></div>
+
+    <div class="meteor one"></div>
+    <div class="meteor two"></div>
+
+    <div class="star s1">⭐</div>
+    <div class="star s2">✦</div>
+    <div class="star s3">✧</div>
+    <div class="star s4">⭐</div>
+    <div class="star s5">✦</div>
+    <div class="star s6">✧</div>
+    <div class="star s7">🌟</div>
+    <div class="star s8">✦</div>
+
+</div>
+
+
+<!-- =========================
+     GAME
+========================= -->
 
 <div class="game">
 
-  <!-- عناصر فضایی -->
 
-  <div class="planet-big"></div>
-  <div class="planet-blue"></div>
-  <div class="ring-planet"></div>
+<!-- =========================
+     START SCREEN
+========================= -->
 
-  <div class="meteor meteor1"></div>
-  <div class="meteor meteor2"></div>
+<section
+    id="startScreen"
+    class="screen active"
+>
 
-  <div class="star star1">✦</div>
-  <div class="star star2">✧</div>
-  <div class="star star3">⭐</div>
-  <div class="star star4">✦</div>
-  <div class="star star5">✧</div>
-  <div class="star star6">⭐</div>
-  <div class="star star7">✦</div>
-  <div class="star star8">✧</div>
-
-
-  <!-- صفحه آغاز -->
-
-  <div class="start-screen" id="startScreen">
-
-    <div class="rocket">🚀</div>
-
-    <div class="game-title">
-      🚀 مأموریت فضایی ریاضی
+    <div class="main-rocket">
+        🚀
     </div>
 
-    <div class="game-subtitle">
-      آماده‌ای یک ماجراجویی هیجان‌انگیز را آغاز کنی؟ ⭐
+    <h1 class="title">
+        🚀 مأموریت کهکشانی اعداد
+    </h1>
+
+    <div class="subtitle">
+        یک ماجراجویی هیجان‌انگیز در دنیای ریاضی ⭐
     </div>
 
     <div class="teacher">
-      Teacher Sadeghi
+        Teacher Sadeghi
     </div>
 
-    <div class="start-card">
 
-      <div class="section-title">
-        🌟 چطور بازی کنیم؟
-      </div>
+    <div class="card">
 
-      <p class="instructions">
-        در هر مرحله یک سؤال درباره‌ی <strong>عددهای قبل و بعد</strong>
-        از تو پرسیده می‌شود.<br>
-        پاسخ درست را از بین دو گزینه انتخاب کن و
-        با کسب امتیاز بیشتر، به یک
-        <strong>قهرمان کهکشان ریاضی</strong> تبدیل شو! 🚀
-      </p>
+        <div class="card-title">
+            👩‍🚀 فضانورد عزیز!
+        </div>
 
-      <label class="name-label" for="studentName">
-        👩‍🚀 نام دانش‌آموز را وارد کن:
-      </label>
+        <p class="description">
 
-      <input
-        id="studentName"
-        class="name-input"
-        type="text"
-        maxlength="25"
-        autocomplete="off"
-        placeholder="نام خودت را اینجا بنویس..."
-      >
+            سفینه‌ات آماده پرواز است! 🚀
+            <br>
 
-      <button class="start-button" id="startButton">
-        🚀 شروع مأموریت
-      </button>
+            برای ورود به کهکشان ریاضی،
+            <strong>نام خودت را وارد کن.</strong>
+
+        </p>
+
+
+        <label
+            class="label"
+            for="nameInput"
+        >
+            ✨ نام دانش‌آموز:
+        </label>
+
+
+        <input
+            id="nameInput"
+            class="name-input"
+            type="text"
+            maxlength="25"
+            autocomplete="off"
+            placeholder="نامت را اینجا بنویس..."
+        >
+
+
+        <button
+            id="enterButton"
+            class="primary"
+        >
+            🚀 ورود به مأموریت
+        </button>
 
     </div>
 
-  </div>
+</section>
 
 
-  <!-- سربرگ بازی -->
 
-  <div class="header">
+<!-- =========================
+     INSTRUCTION SCREEN
+========================= -->
 
-    <div class="header-rocket">
-      👨‍🚀
+<section
+    id="instructionScreen"
+    class="screen"
+>
+
+    <div class="instruction-rocket">
+        👨‍🚀
     </div>
 
-    <div class="logo">
-      Teacher Sadeghi
+    <div
+        class="welcome"
+        id="welcomeText"
+    >
     </div>
 
-  </div>
+
+    <div class="card">
+
+        <div class="card-title">
+            🌟 روش بازی
+        </div>
 
 
-  <!-- صفحه اصلی بازی -->
+        <div class="steps">
 
-  <div class="screen" id="gameScreen">
+            <div class="step">
 
-    <div class="player-name">
-      فضانورد: <span id="playerDisplay">دانش‌آموز</span> 👩‍🚀
+                <div class="step-icon">
+                    1️⃣
+                </div>
+
+                <div>
+                    به سؤال فضایی با دقت نگاه کن.
+                </div>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-icon">
+                    2️⃣
+                </div>
+
+                <div>
+                    مشخص کن عدد مورد نظر،
+                    <strong>قبل یا بعد</strong>
+                    از عدد نشان داده شده چیست.
+                </div>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-icon">
+                    3️⃣
+                </div>
+
+                <div>
+                    یکی از دو پاسخ را انتخاب کن.
+                </div>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-icon">
+                    ⭐
+                </div>
+
+                <div>
+                    پاسخ درست بده و
+                    ستاره‌های بیشتری جمع کن!
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="ready">
+            🚀 آماده‌ای قهرمان کهکشان؟
+        </div>
+
+
+        <button
+            id="startGameButton"
+            class="primary"
+        >
+            🌟 شروع بازی
+        </button>
+
     </div>
+
+</section>
+
+
+
+<!-- =========================
+     GAME SCREEN
+========================= -->
+
+<section
+    id="gameScreen"
+    class="screen"
+>
+
+    <div class="game-top">
+
+        <div class="player">
+            👩‍🚀
+            <span id="playerName">
+                دانش‌آموز
+            </span>
+        </div>
+
+
+        <div class="score-box">
+            ⭐
+            <span id="score">
+                ۰
+            </span>
+        </div>
+
+    </div>
+
 
     <div class="progress">
-      <div class="progress-bar" id="progress"></div>
-    </div>
 
-    <div class="question-box">
-
-      <div class="mission">
-        🚀 مأموریت فضایی
-      </div>
-
-      <div class="question" id="question"></div>
+        <div
+            id="progressBar"
+            class="progress-bar"
+        ></div>
 
     </div>
 
-    <div class="options">
 
-      <button class="answer" id="option1"></button>
+    <div class="question-card">
 
-      <button class="answer" id="option2"></button>
+        <div class="mission">
+            🚀 مأموریت فضایی
+            <span id="missionNumber">
+                ۱
+            </span>
+            از ۱۰
+        </div>
+
+
+        <div
+            id="question"
+            class="question"
+        >
+        </div>
 
     </div>
 
-    <div class="feedback" id="feedback"></div>
 
-    <button class="next" id="next">
-      سؤال بعدی 🚀
+    <div class="answers">
+
+        <button
+            id="answer1"
+            class="answer blue"
+        >
+        </button>
+
+
+        <button
+            id="answer2"
+            class="answer pink"
+        >
+        </button>
+
+    </div>
+
+
+    <div
+        id="feedback"
+        class="feedback"
+    >
+    </div>
+
+
+    <button
+        id="nextButton"
+        class="next"
+    >
+        🚀 سؤال بعدی
     </button>
 
-    <div class="score">
-      <span>
-        ⭐ امتیاز:
-        <b id="score">۰</b>
-      </span>
-    </div>
-
-  </div>
+</section>
 
 
-  <!-- صفحه پایان -->
 
-  <div class="end" id="end">
+<!-- =========================
+     END SCREEN
+========================= -->
+
+<section
+    id="endScreen"
+    class="screen"
+>
 
     <div class="trophy">
-      🏆
+        🏆
     </div>
 
-    <h2>
-      مأموریت تمام شد! 🎉
-    </h2>
 
-    <div class="final">
-      <span id="playerFinalName">دانش‌آموز</span>
-      <br>
-      امتیاز:
-      <span id="finalScore">۰</span>
-      از ۱۰
+    <div class="end-title">
+        🎉 مأموریت تمام شد!
     </div>
 
-    <div class="message" id="message"></div>
 
-    <button class="restart" onclick="restart()">
-      🚀 دوباره بازی کن
+    <div
+        class="end-name"
+        id="endName"
+    >
+        قهرمان
+    </div>
+
+
+    <div class="final-score">
+
+        امتیاز تو:
+
+        <span id="finalScore">
+            ۰
+        </span>
+
+        از ۱۰
+
+    </div>
+
+
+    <div
+        id="endMessage"
+        class="end-message"
+    >
+    </div>
+
+
+    <button
+        id="restartButton"
+        class="primary"
+    >
+        🚀 دوباره بازی کن
     </button>
 
-  </div>
+</section>
+
 
 </div>
 
 
 <script>
 
-const digits="۰۱۲۳۴۵۶۷۸۹";
+/* =========================
+   VARIABLES
+========================= */
 
-function fa(n){
-  return String(n).replace(/[0-9]/g,x=>digits[x]);
+const faDigits =
+    "۰۱۲۳۴۵۶۷۸۹";
+
+let studentName = "";
+
+let currentQuestion = 0;
+
+let score = 0;
+
+let answered = false;
+
+let questions = [];
+
+
+/* =========================
+   PERSIAN NUMBER
+========================= */
+
+function fa(number){
+
+    return String(number)
+        .replace(
+            /[0-9]/g,
+            x => faDigits[x]
+        );
 }
 
-let current=0;
-let score=0;
-let answered=false;
-let questions=[];
-let studentName="";
+
+/* =========================
+   SCREEN SWITCH
+========================= */
+
+function showScreen(id){
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+
+            screen.classList.remove("active");
+
+        });
 
 
-/* ساخت سؤال‌ها */
+    document
+        .getElementById(id)
+        .classList.add("active");
 
-function makeQuestions(){
+}
 
-  questions=[];
 
-  for(let i=0;i<10;i++){
+/* =========================
+   CREATE QUESTIONS
+========================= */
 
-    let number=
-      Math.floor(Math.random()*89)+10;
+function createQuestions(){
 
-    let before=number-1;
-    let after=number+1;
+    questions = [];
 
-    let isBefore=Math.random()<.5;
 
-    let correct=isBefore?before:after;
+    for(let i=0;i<10;i++){
 
-    let wrong;
+        let number =
+            Math.floor(
+                Math.random()*89
+            ) + 10;
 
-    if(Math.random()<.5){
 
-      wrong=
-        correct+
-        (Math.random()<.5?1:-2);
+        let before =
+            number - 1;
 
-    }else{
 
-      wrong=
-        correct+
-        (Math.random()<.5?2:-1);
+        let after =
+            number + 1;
+
+
+        let askBefore =
+            Math.random() < .5;
+
+
+        let correct =
+            askBefore
+                ? before
+                : after;
+
+
+        let wrong;
+
+
+        if(Math.random()<.5){
+
+            wrong =
+                correct +
+                (
+                    Math.random()<.5
+                    ? 1
+                    : -2
+                );
+
+        }else{
+
+            wrong =
+                correct +
+                (
+                    Math.random()<.5
+                    ? 2
+                    : -1
+                );
+
+        }
+
+
+        if(
+            wrong < 10 ||
+            wrong > 99 ||
+            wrong === correct
+        ){
+
+            wrong =
+                askBefore
+                ? number + 1
+                : number - 1;
+
+        }
+
+
+        let options;
+
+
+        if(Math.random()<.5){
+
+            options =
+                [correct,wrong];
+
+        }else{
+
+            options =
+                [wrong,correct];
+
+        }
+
+
+        questions.push({
+
+            number:number,
+
+            askBefore:askBefore,
+
+            correct:correct,
+
+            options:options,
+
+            correctIndex:
+                options[0] === correct
+                ? 0
+                : 1
+
+        });
 
     }
+
+}
+
+
+/* =========================
+   SOUND ENGINE
+========================= */
+
+function playSound(type){
+
+    try{
+
+        const AudioContext =
+            window.AudioContext ||
+            window.webkitAudioContext;
+
+
+        const ctx =
+            new AudioContext();
+
+
+        const oscillator =
+            ctx.createOscillator();
+
+
+        const gain =
+            ctx.createGain();
+
+
+        oscillator.connect(gain);
+
+        gain.connect(ctx.destination);
+
+
+        if(type === "start"){
+
+            oscillator.frequency.setValueAtTime(
+                440,
+                ctx.currentTime
+            );
+
+            oscillator.frequency.setValueAtTime(
+                660,
+                ctx.currentTime + .12
+            );
+
+            oscillator.frequency.setValueAtTime(
+                880,
+                ctx.currentTime + .24
+            );
+
+        }
+
+
+        if(type === "correct"){
+
+            oscillator.frequency.setValueAtTime(
+                600,
+                ctx.currentTime
+            );
+
+            oscillator.frequency.setValueAtTime(
+                800,
+                ctx.currentTime + .12
+            );
+
+            oscillator.frequency.setValueAtTime(
+                1000,
+                ctx.currentTime + .24
+            );
+
+        }
+
+
+        if(type === "wrong"){
+
+            oscillator.frequency.setValueAtTime(
+                220,
+                ctx.currentTime
+            );
+
+            oscillator.frequency.setValueAtTime(
+                140,
+                ctx.currentTime + .2
+            );
+
+        }
+
+
+        if(type === "finish"){
+
+            oscillator.frequency.setValueAtTime(
+                523,
+                ctx.currentTime
+            );
+
+            oscillator.frequency.setValueAtTime(
+                659,
+                ctx.currentTime + .13
+            );
+
+            oscillator.frequency.setValueAtTime(
+                784,
+                ctx.currentTime + .26
+            );
+
+            oscillator.frequency.setValueAtTime(
+                1046,
+                ctx.currentTime + .39
+            );
+
+        }
+
+
+        gain.gain.setValueAtTime(
+            .001,
+            ctx.currentTime
+        );
+
+
+        gain.gain.exponentialRampToValueAtTime(
+            .22,
+            ctx.currentTime + .03
+        );
+
+
+        gain.gain.exponentialRampToValueAtTime(
+            .001,
+            ctx.currentTime + .8
+        );
+
+
+        oscillator.start();
+
+        oscillator.stop(
+            ctx.currentTime + .85
+        );
+
+    }catch(error){}
+
+}
+
+
+/* =========================
+   SPEECH
+========================= */
+
+function speak(text){
 
     if(
-      wrong<10 ||
-      wrong>99 ||
-      wrong===correct
+        "speechSynthesis"
+        in window
     ){
 
-      wrong=
-        isBefore?
-        number+1:
-        number-1;
+        speechSynthesis.cancel();
+
+
+        const utterance =
+            new SpeechSynthesisUtterance(text);
+
+
+        utterance.lang =
+            "fa-IR";
+
+
+        utterance.rate =
+            .9;
+
+
+        utterance.pitch =
+            1.15;
+
+
+        speechSynthesis.speak(
+            utterance
+        );
 
     }
-
-    let options;
-
-    if(Math.random()<.5){
-
-      options=[correct,wrong];
-
-    }else{
-
-      options=[wrong,correct];
-
-    }
-
-    questions.push({
-
-      number:number,
-
-      before:isBefore,
-
-      correct:correct,
-
-      options:options,
-
-      correctIndex:
-        options[0]===correct?0:1
-
-    });
-
-  }
 
 }
 
 
-/* صدا */
+/* =========================
+   START NAME
+========================= */
 
-function sound(type){
+document
+    .getElementById("enterButton")
+    .onclick = enterMission;
 
-  try{
 
-    const C=
-      window.AudioContext||
-      window.webkitAudioContext;
+document
+    .getElementById("nameInput")
+    .addEventListener(
+        "keydown",
+        function(event){
 
-    const ctx=new C();
+            if(event.key === "Enter"){
 
-    const o=ctx.createOscillator();
+                enterMission();
 
-    const g=ctx.createGain();
+            }
 
-    o.connect(g);
-    g.connect(ctx.destination);
+        }
+    );
 
-    if(type==="correct"){
 
-      o.frequency.setValueAtTime(
-        600,
-        ctx.currentTime
-      );
+function enterMission(){
 
-      o.frequency.setValueAtTime(
-        800,
-        ctx.currentTime+.12
-      );
+    const input =
+        document.getElementById(
+            "nameInput"
+        );
 
-      o.frequency.setValueAtTime(
-        1000,
-        ctx.currentTime+.24
-      );
+
+    studentName =
+        input.value.trim();
+
+
+    if(!studentName){
+
+        input.focus();
+
+        input.style.borderColor =
+            "#ff6e91";
+
+
+        input.placeholder =
+            "اول نامت را بنویس 🌟";
+
+
+        playSound("wrong");
+
+
+        setTimeout(
+            ()=>{
+                input.style.borderColor =
+                    "rgba(79,211,255,.52)";
+            },
+            1000
+        );
+
+
+        return;
 
     }
 
-    else if(type==="wrong"){
 
-      o.frequency.setValueAtTime(
-        230,
-        ctx.currentTime
-      );
+    document
+        .getElementById(
+            "playerName"
+        )
+        .textContent =
+        studentName;
 
-      o.frequency.setValueAtTime(
-        150,
-        ctx.currentTime+.2
-      );
+
+    document
+        .getElementById(
+            "endName"
+        )
+        .textContent =
+        "🌟 آفرین "+
+        studentName+
+        "!";
+
+
+    document
+        .getElementById(
+            "welcomeText"
+        )
+        .innerHTML =
+        "🌟 سلام "+
+        studentName+
+        "!";
+
+
+    playSound("start");
+
+
+    showScreen(
+        "instructionScreen"
+    );
+
+
+    setTimeout(
+        ()=>{
+            speak(
+                "سلام "+
+                studentName+
+                "! به مأموریت کهکشانی اعداد خوش آمدی."
+            );
+        },
+        300
+    );
+
+}
+
+
+/* =========================
+   START GAME
+========================= */
+
+document
+    .getElementById(
+        "startGameButton"
+    )
+    .onclick = startGame;
+
+
+function startGame(){
+
+    currentQuestion = 0;
+
+    score = 0;
+
+    createQuestions();
+
+    playSound("start");
+
+    showScreen(
+        "gameScreen"
+    );
+
+    loadQuestion();
+
+
+    setTimeout(
+        ()=>{
+            speak(
+                "مأموریت شروع شد!"
+            );
+        },
+        300
+    );
+
+}
+
+
+/* =========================
+   LOAD QUESTION
+========================= */
+
+function loadQuestion(){
+
+    answered = false;
+
+
+    const q =
+        questions[
+            currentQuestion
+        ];
+
+
+    const word =
+        q.askBefore
+        ? "قبل از"
+        : "بعد از";
+
+
+    document
+        .getElementById(
+            "question"
+        )
+        .innerHTML =
+        word+
+        " <strong>"+
+        fa(q.number)+
+        "</strong> کدام عدد است؟";
+
+
+    document
+        .getElementById(
+            "answer1"
+        )
+        .textContent =
+        fa(q.options[0]);
+
+
+    document
+        .getElementById(
+            "answer2"
+        )
+        .textContent =
+        fa(q.options[1]);
+
+
+    document
+        .getElementById(
+            "missionNumber"
+        )
+        .textContent =
+        fa(currentQuestion + 1);
+
+
+    document
+        .getElementById(
+            "progressBar"
+        )
+        .style.width =
+        (
+            (currentQuestion + 1)
+            /10
+            *100
+        )+"%";
+
+
+    document
+        .getElementById(
+            "score"
+        )
+        .textContent =
+        fa(score);
+
+
+    document
+        .getElementById(
+            "feedback"
+        )
+        .textContent =
+        "";
+
+
+    document
+        .getElementById(
+            "feedback"
+        )
+        .className =
+        "feedback";
+
+
+    document
+        .getElementById(
+            "nextButton"
+        )
+        .style.display =
+        "none";
+
+
+    const a1 =
+        document.getElementById(
+            "answer1"
+        );
+
+
+    const a2 =
+        document.getElementById(
+            "answer2"
+        );
+
+
+    a1.disabled = false;
+
+    a2.disabled = false;
+
+
+    a1.className =
+        "answer blue";
+
+
+    a2.className =
+        "answer pink";
+
+}
+
+
+/* =========================
+   ANSWER
+========================= */
+
+function checkAnswer(index){
+
+    if(answered)return;
+
+    answered = true;
+
+
+    const q =
+        questions[
+            currentQuestion
+        ];
+
+
+    const selected =
+        index === 0
+        ? document.getElementById("answer1")
+        : document.getElementById("answer2");
+
+
+    const correctButton =
+        q.correctIndex === 0
+        ? document.getElementById("answer1")
+        : document.getElementById("answer2");
+
+
+    document
+        .getElementById("answer1")
+        .disabled = true;
+
+
+    document
+        .getElementById("answer2")
+        .disabled = true;
+
+
+    if(index === q.correctIndex){
+
+        score++;
+
+
+        selected
+            .classList
+            .add("correct");
+
+
+        document
+            .getElementById(
+                "feedback"
+            )
+            .innerHTML =
+            "🌟 آفرین "+
+            studentName+
+            "! پاسخ درست است! 🚀";
+
+
+        document
+            .getElementById(
+                "feedback"
+            )
+            .className =
+            "feedback good";
+
+
+        playSound("correct");
+
+
+        speak(
+            "آفرین! درست گفتی!"
+        );
+
+
+        celebration(12);
+
+    }else{
+
+        selected
+            .classList
+            .add("wrong");
+
+
+        correctButton
+            .classList
+            .add("correct");
+
+
+        document
+            .getElementById(
+                "feedback"
+            )
+            .innerHTML =
+            "💙 اشکالی ندارد! پاسخ درست "+
+            fa(q.correct)+
+            " بود.";
+
+
+        document
+            .getElementById(
+                "feedback"
+            )
+            .className =
+            "feedback bad";
+
+
+        playSound("wrong");
+
+
+        speak(
+            "اشکالی ندارد. دوباره تلاش کن."
+        );
+
+    }
+
+
+    document
+        .getElementById(
+            "score"
+        )
+        .textContent =
+        fa(score);
+
+
+    document
+        .getElementById(
+            "nextButton"
+        )
+        .style.display =
+        "block";
+
+}
+
+
+/* =========================
+   ANSWER BUTTONS
+========================= */
+
+document
+    .getElementById("answer1")
+    .onclick =
+    ()=>{
+        checkAnswer(0);
+    };
+
+
+document
+    .getElementById("answer2")
+    .onclick =
+    ()=>{
+        checkAnswer(1);
+    };
+
+
+/* =========================
+   NEXT
+========================= */
+
+document
+    .getElementById(
+        "nextButton"
+    )
+    .onclick =
+    ()=>{
+
+        currentQuestion++;
+
+
+        if(currentQuestion >= 10){
+
+            finishGame();
+
+        }else{
+
+            loadQuestion();
+
+        }
+
+    };
+
+
+/* =========================
+   FINISH
+========================= */
+
+function finishGame(){
+
+    showScreen(
+        "endScreen"
+    );
+
+
+    document
+        .getElementById(
+            "finalScore"
+        )
+        .textContent =
+        fa(score);
+
+
+    let message = "";
+
+
+    if(score === 10){
+
+        message =
+            "🌟 فوق‌العاده بود! 🌟<br>"+
+            "تو قهرمان واقعی کهکشان ریاضی هستی! 🚀";
+
+    }
+
+    else if(score >= 8){
+
+        message =
+            "🎉 عالی بود!<br>"+
+            "مأموریت فضایی را فوق‌العاده انجام دادی!";
+
+    }
+
+    else if(score >= 5){
+
+        message =
+            "⭐ آفرین قهرمان!<br>"+
+            "با کمی تمرین، سفینه‌ات قوی‌تر می‌شود! 🚀";
 
     }
 
     else{
 
-      o.frequency.setValueAtTime(
-        523,
-        ctx.currentTime
-      );
-
-      o.frequency.setValueAtTime(
-        659,
-        ctx.currentTime+.13
-      );
-
-      o.frequency.setValueAtTime(
-        784,
-        ctx.currentTime+.26
-      );
-
-      o.frequency.setValueAtTime(
-        1046,
-        ctx.currentTime+.4
-      );
+        message =
+            "💙 خسته نباشی فضانورد!<br>"+
+            "یک بار دیگر تلاش کن و قوی‌تر برگرد! 🚀";
 
     }
 
-    g.gain.setValueAtTime(
-      .001,
-      ctx.currentTime
+
+    document
+        .getElementById(
+            "endMessage"
+        )
+        .innerHTML =
+        message;
+
+
+    playSound("finish");
+
+
+    celebration(45);
+
+
+    setTimeout(
+        ()=>{
+            speak(
+                score === 10
+                ? "آفرین قهرمان! تو قهرمان کهکشان ریاضی هستی!"
+                : "آفرین قهرمان! خسته نباشی!"
+            );
+        },
+        500
     );
-
-    g.gain.exponentialRampToValueAtTime(
-      .22,
-      ctx.currentTime+.03
-    );
-
-    g.gain.exponentialRampToValueAtTime(
-      .001,
-      ctx.currentTime+.8
-    );
-
-    o.start();
-
-    o.stop(
-      ctx.currentTime+.85
-    );
-
-  }catch(e){}
 
 }
 
 
-/* صدای فارسی مرورگر */
-
-function speak(text){
-
-  if(
-    "speechSynthesis" in window
-  ){
-
-    speechSynthesis.cancel();
-
-    let u=
-      new SpeechSynthesisUtterance(text);
-
-    u.lang="fa-IR";
-
-    u.rate=.9;
-
-    u.pitch=1.15;
-
-    speechSynthesis.speak(u);
-
-  }
-
-}
-
-
-/* شروع بازی */
-
-function startGame(){
-
-  let input=
-    document.getElementById("studentName");
-
-  studentName=
-    input.value.trim();
-
-  if(!studentName){
-
-    input.focus();
-
-    input.style.borderColor="#ff7f9f";
-
-    input.placeholder=
-      "لطفاً ابتدا نامت را بنویس 🌟";
-
-    setTimeout(()=>{
-
-      input.style.borderColor=
-        "rgba(86,214,255,.55)";
-
-    },1200);
-
-    sound("wrong");
-
-    return;
-
-  }
-
-  document.getElementById(
-    "playerDisplay"
-  ).textContent=studentName;
-
-  document.getElementById(
-    "playerFinalName"
-  ).textContent=studentName;
-
-  document.getElementById(
-    "startScreen"
-  ).classList.add("hidden");
-
-  sound("finish");
-
-  setTimeout(()=>{
-
-    speak(
-      "آفرین "+
-      studentName+
-      "! آماده‌ای؟ مأموریت فضایی را شروع کن!"
-    );
-
-  },250);
-
-  current=0;
-  score=0;
-
-  makeQuestions();
-
-  load();
-
-}
-
-
-/* Enter برای شروع */
+/* =========================
+   RESTART
+========================= */
 
 document
-  .getElementById("studentName")
-  .addEventListener(
-    "keydown",
-    function(e){
+    .getElementById(
+        "restartButton"
+    )
+    .onclick =
+    ()=>{
 
-      if(e.key==="Enter"){
+        playSound("start");
 
         startGame();
 
-      }
+    };
 
-    }
-  );
 
+/* =========================
+   CELEBRATION
+========================= */
 
-document
-  .getElementById("startButton")
-  .onclick=startGame;
+function celebration(amount){
 
+    const symbols = [
+        "⭐",
+        "🌟",
+        "✨",
+        "🚀",
+        "💫",
+        "🎉",
+        "🏆"
+    ];
 
-/* نمایش سؤال */
 
-function load(){
-
-  answered=false;
-
-  let q=questions[current];
-
-  let word=
-    q.before?
-    "قبل از":
-    "بعد از";
-
-  document
-    .getElementById("question")
-    .innerHTML=
-      word+
-      " <strong>"+
-      fa(q.number)+
-      "</strong> کدام است؟";
-
-  document
-    .getElementById("option1")
-    .textContent=
-      fa(q.options[0]);
-
-  document
-    .getElementById("option2")
-    .textContent=
-      fa(q.options[1]);
-
-  document
-    .getElementById("option1")
-    .className="answer";
-
-  document
-    .getElementById("option2")
-    .className="answer";
-
-  document
-    .getElementById("option1")
-    .disabled=false;
-
-  document
-    .getElementById("option2")
-    .disabled=false;
-
-  document
-    .getElementById("feedback")
-    .textContent="";
-
-  document
-    .getElementById("feedback")
-    .className="feedback";
-
-  document
-    .getElementById("next")
-    .style.display="none";
-
-  document
-    .getElementById("progress")
-    .style.width=
-      ((current+1)/10*100)+"%";
-
-  document
-    .getElementById("score")
-    .textContent=
-      fa(score);
-
-}
-
-
-/* پاسخ */
-
-function answer(index){
-
-  if(answered)return;
-
-  answered=true;
-
-  let q=questions[current];
-
-  let selected=
-    index===0?
-    document.getElementById("option1"):
-    document.getElementById("option2");
-
-  let correctButton=
-    q.correctIndex===0?
-    document.getElementById("option1"):
-    document.getElementById("option2");
-
-  document
-    .getElementById("option1")
-    .disabled=true;
-
-  document
-    .getElementById("option2")
-    .disabled=true;
-
-
-  if(index===q.correctIndex){
-
-    score++;
-
-    selected
-      .classList
-      .add("correct");
-
-    document
-      .getElementById("feedback")
-      .textContent=
-        "🚀 آفرین "+
-        studentName+
-        "! درست گفتی! ⭐";
-
-    document
-      .getElementById("feedback")
-      .className=
-        "feedback good";
-
-    sound("correct");
-
-    speak(
-      "آفرین "+
-      studentName+
-      "! درست گفتی!"
-    );
-
-    createStars(12);
-
-  }
-
-  else{
-
-    selected
-      .classList
-      .add("wrong");
-
-    correctButton
-      .classList
-      .add("correct");
-
-    document
-      .getElementById("feedback")
-      .textContent=
-        "👾 اشکالی ندارد "+
-        studentName+
-        "! دوباره تلاش کن.";
-
-    document
-      .getElementById("feedback")
-      .className=
-        "feedback bad";
-
-    sound("wrong");
-
-    speak(
-      "اشکالی ندارد. دوباره تلاش کن."
-    );
-
-  }
-
-  document
-    .getElementById("score")
-    .textContent=
-      fa(score);
-
-  document
-    .getElementById("next")
-    .style.display="block";
-
-}
-
-
-/* انتخاب پاسخ */
-
-document
-  .getElementById("option1")
-  .onclick=()=>{
-    answer(0);
-  };
-
-document
-  .getElementById("option2")
-  .onclick=()=>{
-    answer(1);
-  };
-
-
-/* سؤال بعد */
-
-document
-  .getElementById("next")
-  .onclick=()=>{
-
-    current++;
-
-    if(current>=10){
-
-      finish();
-
-    }else{
-
-      load();
-
-    }
-
-  };
-
-
-/* پایان */
-
-function finish(){
-
-  document
-    .getElementById("gameScreen")
-    .style.display="none";
-
-  document
-    .getElementById("end")
-    .style.display="flex";
-
-  document
-    .getElementById("finalScore")
-    .textContent=
-      fa(score);
-
-  let message;
-
-  if(score===10){
-
-    message=
-      "🌟 فوق‌العاده بود "+
-      studentName+
-      "! 🌟<br>"+
-      "تو قهرمان کهکشان ریاضی هستی! 🚀";
-
-  }
-
-  else if(score>=8){
-
-    message=
-      "🎉 عالی بود "+
-      studentName+
-      "!<br>"+
-      "مأموریت فضایی را خیلی خوب انجام دادی! 🚀";
-
-  }
-
-  else if(score>=5){
-
-    message=
-      "⭐ آفرین "+
-      studentName+
-      "!<br>"+
-      "با کمی تمرین قوی‌تر می‌شوی!";
-
-  }
-
-  else{
-
-    message=
-      "💙 خسته نباشی "+
-      studentName+
-      "!<br>"+
-      "دوباره تلاش کن و قوی‌تر برگرد! 🚀";
-
-  }
-
-  document
-    .getElementById("message")
-    .innerHTML=message;
-
-  sound("finish");
-
-  setTimeout(()=>{
-
-    speak(
-      score===10?
-      "آفرین قهرمان! تو قهرمان کهکشان ریاضی هستی!":
-      "آفرین قهرمان! خسته نباشی!"
-    );
-
-  },500);
-
-  confetti();
-
-}
-
-
-/* ستاره هنگام پاسخ درست */
-
-function createStars(count){
-
-  let symbols=[
-    "⭐",
-    "🌟",
-    "✨"
-  ];
-
-  for(let i=0;i<count;i++){
-
-    let x=
-      document.createElement("div");
-
-    x.className="confetti";
-
-    x.textContent=
-      symbols[
-        Math.floor(
-          Math.random()*symbols.length
-        )
-      ];
-
-    x.style.left=
-      Math.random()*100+
-      "vw";
-
-    x.style.animationDelay=
-      Math.random()*
-      .7+
-      "s";
-
-    document.body.appendChild(x);
-
-    setTimeout(
-      ()=>x.remove(),
-      3800
-    );
-
-  }
-
-}
-
-
-/* جشن پایان */
-
-function confetti(){
-
-  let symbols=[
-    "🚀",
-    "⭐",
-    "🌟",
-    "✨",
-    "🎉",
-    "🏆",
-    "🪐",
-    "💫"
-  ];
-
-  for(let i=0;i<45;i++){
-
-    let x=
-      document.createElement("div");
-
-    x.className="confetti";
-
-    x.textContent=
-      symbols[
-        Math.floor(
-          Math.random()*symbols.length
-        )
-      ];
-
-    x.style.left=
-      Math.random()*100+
-      "vw";
-
-    x.style.animationDelay=
-      Math.random()*1.5+
-      "s";
-
-    document.body.appendChild(x);
-
-    setTimeout(
-      ()=>x.remove(),
-      4500
-    );
-
-  }
-
-}
-
-
-/* بازی دوباره */
-
-function restart(){
-
-  current=0;
-  score=0;
-
-  document
-    .getElementById("end")
-    .style.display="none";
-
-  document
-    .getElementById("gameScreen")
-    .style.display="flex";
-
-  makeQuestions();
-
-  load();
-
-  sound("finish");
-
-}
-
-
-/* جلوگیری از انتخاب متن */
-
-document.addEventListener(
-  "selectstart",
-  e=>{
-    if(
-      e.target.tagName!=="INPUT"
+    for(
+        let i=0;
+        i<amount;
+        i++
     ){
-      e.preventDefault();
+
+        const item =
+            document.createElement(
+                "div"
+            );
+
+
+        item.className =
+            "confetti";
+
+
+        item.textContent =
+            symbols[
+                Math.floor(
+                    Math.random()*
+                    symbols.length
+                )
+            ];
+
+
+        item.style.left =
+            Math.random()*100+
+            "vw";
+
+
+        item.style.animationDelay =
+            Math.random()*1.3+
+            "s";
+
+
+        document.body.appendChild(
+            item
+        );
+
+
+        setTimeout(
+            ()=>{
+                item.remove();
+            },
+            4500
+        );
+
     }
-  }
-);
+
+}
 
 </script>
 
