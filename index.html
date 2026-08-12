@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Teacher Sadeghi</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+min-height:100vh;
+font-family:Tahoma,Arial,sans-serif;
+color:#fff;
+overflow:hidden;
+background:
+radial-gradient(circle at 20% 20%,rgba(75,130,255,.35),transparent 18%),
+radial-gradient(circle at 80% 70%,rgba(160,55,255,.25),transparent 20%),
+linear-gradient(180deg,#03051d,#08052d 50%,#020313);
+display:flex;
+align-items:center;
+justify-content:center;
+padding:12px;
+}
+
+body:before{
+content:"";
+position:fixed;
+inset:0;
+background-image:
+radial-gradient(circle,#fff 1px,transparent 1.5px),
+radial-gradient(circle,#b8eaff 1px,transparent 1.5px);
+background-size:73px 71px,113px 109px;
+background-position:10px 20px,35px 60px;
+opacity:.7;
+pointer-events:none;
+}
+
+.game{
+width:100%;
+max-width:560px;
+height:min(760px,96vh);
+position:relative;
+overflow:hidden;
+border-radius:32px;
+border:2px solid rgba(135,190,255,.45);
+background:
+radial-gradient(circle at 50% 15%,rgba(39,83,190,.35),transparent 30%),
+linear-gradient(180deg,#07113c,#10052f 70%,#03041a);
+box-shadow:
+0 0 35px rgba(48,126,255,.35),
+inset 0 0 50px rgba(70,80,255,.12);
+}
+
+.planet{
+position:absolute;
+border-radius:50%;
+pointer-events:none;
+}
+
+.planet.big{
+width:125px;
+height:125px;
+right:-48px;
+bottom:-35px;
+background:
+radial-gradient(circle at 35% 30%,#ffbf70,#bd542e 45%,#4d183d 80%);
+box-shadow:0 0 30px rgba(255,100,100,.35);
+}
+
+.planet.small{
+width:55px;
+height:55px;
+left:18px;
+top:115px;
+background:
+radial-gradient(circle at 35% 30%,#71e8ff,#2465bb 55%,#17245e);
+box-shadow:0 0 20px rgba(65,190,255,.5);
+}
+
+.ring{
+position:absolute;
+width:180px;
+height:35px;
+border:6px solid rgba(255,193,85,.65);
+border-radius:50%;
+right:-75px;
+bottom:8px;
+transform:rotate(-18deg);
+}
+
+.header{
+height:155px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+position:relative;
+z-index:2;
+}
+
+.robot{
+font-size:55px;
+filter:drop-shadow(0 0 12px #57d9ff);
+animation:float 2.5s ease-in-out infinite;
+}
+
+.logo{
+font-family:Arial,sans-serif;
+font-size:22px;
+font-weight:900;
+letter-spacing:1px;
+color:#9ceaff;
+text-shadow:
+0 0 7px #38bfff,
+0 0 18px #278dff;
+direction:ltr;
+margin-top:3px;
+}
+
+.stars{
+position:absolute;
+font-size:18px;
+animation:twinkle 1.5s infinite alternate;
+}
+
+.a{top:20px;left:28px}
+.b{top:38px;right:35px}
+.c{top:100px;right:85px}
+.d{top:120px;left:80px}
+
+.screen{
+position:relative;
+z-index:3;
+padding:0 20px 20px;
+height:calc(100% - 155px);
+display:flex;
+flex-direction:column;
+}
+
+.progress{
+height:10px;
+background:rgba(255,255,255,.12);
+border-radius:20px;
+overflow:hidden;
+margin-bottom:15px;
+}
+
+.progress-bar{
+height:100%;
+width:10%;
+background:linear-gradient(90deg,#28d8ff,#8d72ff,#ff8acb);
+box-shadow:0 0 12px #49cfff;
+transition:.4s;
+}
+
+.question-box{
+background:rgba(9,18,63,.82);
+border:2px solid rgba(94,190,255,.45);
+border-radius:25px;
+padding:22px 12px;
+text-align:center;
+box-shadow:
+0 0 25px rgba(38,127,255,.15),
+inset 0 0 20px rgba(90,120,255,.08);
+margin-bottom:18px;
+}
+
+.mission{
+font-size:14px;
+color:#8eeaff;
+margin-bottom:10px;
+font-weight:bold;
+}
+
+.question{
+font-size:30px;
+font-weight:900;
+line-height:1.8;
+text-shadow:0 0 12px rgba(92,206,255,.45);
+}
+
+.options{
+display:flex;
+gap:12px;
+direction:rtl;
+}
+
+.answer{
+flex:1;
+height:92px;
+border-radius:22px;
+font-family:Tahoma,Arial,sans-serif;
+font-size:30px;
+font-weight:900;
+cursor:pointer;
+color:white;
+transition:.15s;
+}
+
+.answer:first-child{
+background:linear-gradient(145deg,#087dc0,#123d9c);
+border:2px solid #4ddaff;
+box-shadow:0 7px 0 #062d68,0 0 18px rgba(50,210,255,.25);
+}
+
+.answer:last-child{
+background:linear-gradient(145deg,#e76a24,#a92d59);
+border:2px solid #ffad61;
+box-shadow:0 7px 0 #651d43,0 0 18px rgba(255,120,70,.25);
+}
+
+.answer:active{
+transform:translateY(6px);
+box-shadow:0 2px 0 rgba(0,0,0,.5);
+}
+
+.answer.correct{
+background:linear-gradient(145deg,#18c878,#087d61)!important;
+border-color:#7dffbc!important;
+box-shadow:0 0 25px #29ef9b!important;
+}
+
+.answer.wrong{
+background:linear-gradient(145deg,#d83252,#721b49)!important;
+border-color:#ff8498!important;
+box-shadow:0 0 20px #ff315d!important;
+}
+
+.feedback{
+min-height:55px;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+font-size:19px;
+font-weight:900;
+}
+
+.good{
+color:#6dffb0;
+text-shadow:0 0 10px #27ff9b;
+}
+
+.bad{
+color:#ff91a5;
+text-shadow:0 0 10px #ff355e;
+}
+
+.next{
+display:none;
+width:100%;
+height:55px;
+border:0;
+border-radius:18px;
+font-family:Tahoma;
+font-size:18px;
+font-weight:900;
+color:#fff;
+background:linear-gradient(90deg,#684eff,#ae4cff);
+box-shadow:0 5px 0 #38258d;
+cursor:pointer;
+}
+
+.score{
+margin-top:auto;
+text-align:center;
+padding-top:12px;
+}
+
+.score span{
+display:inline-block;
+padding:8px 18px;
+border-radius:20px;
+background:rgba(255,211,75,.12);
+border:1px solid rgba(255,211,75,.35);
+color:#ffd85a;
+font-weight:900;
+}
+
+.end{
+display:none;
+position:absolute;
+inset:0;
+z-index:10;
+background:
+radial-gradient(circle at 50% 35%,rgba(71,75,190,.4),transparent 30%),
+linear-gradient(180deg,#05082a,#12052d);
+align-items:center;
+justify-content:center;
+flex-direction:column;
+text-align:center;
+padding:25px;
+}
+
+.trophy{
+font-size:85px;
+filter:drop-shadow(0 0 18px #ffd84d);
+animation:bounce 1s infinite;
+}
+
+.end h2{
+font-size:32px;
+margin:12px 0;
+color:#ffd85a;
+text-shadow:0 0 15px #ff9d2e;
+}
+
+.final{
+font-size:25px;
+font-weight:900;
+color:#fff;
+margin:10px 0 18px;
+}
+
+.message{
+font-size:18px;
+line-height:2;
+color:#aeeaff;
+margin-bottom:22px;
+}
+
+.restart{
+border:0;
+border-radius:20px;
+padding:15px 30px;
+font-family:Tahoma;
+font-size:18px;
+font-weight:900;
+color:#fff;
+background:linear-gradient(90deg,#087dc0,#7254ff);
+box-shadow:0 6px 0 #173078;
+cursor:pointer;
+}
+
+.confetti{
+position:fixed;
+top:-30px;
+font-size:25px;
+z-index:100;
+animation:fall 3s linear forwards;
+pointer-events:none;
+}
+
+@keyframes float{
+0%,100%{transform:translateY(0)}
+50%{transform:translateY(-9px)}
+}
+
+@keyframes twinkle{
+from{opacity:.35;transform:scale(.8)}
+to{opacity:1;transform:scale(1.2)}
+}
+
+@keyframes bounce{
+0%,100%{transform:translateY(0)}
+50%{transform:translateY(-15px)}
+}
+
+@keyframes fall{
+to{
+transform:translateY(110vh) rotate(500deg);
+opacity:0;
+}
+}
+
+@media(max-width:430px){
+
+.game{
+height:96vh;
+border-radius:25px;
+}
+
+.header{
+height:140px;
+}
+
+.robot{
+font-size:48px;
+}
+
+.logo{
+font-size:19px;
+}
+
+.screen{
+height:calc(100% - 140px);
+padding:0 14px 14px;
+}
+
+.question{
+font-size:25px;
+}
+
+.answer{
+height:75px;
+font-size:26px;
+}
+
+.question-box{
+padding:18px 8px;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+<div class="planet big"></div>
+<div class="planet small"></div>
+<div class="ring"></div>
+
+<div class="header">
+
+<div class="stars a">✦</div>
+<div class="stars b">✧</div>
+<div class="stars c">⭐</div>
+<div class="stars d">✦</div>
+
+<div class="robot">👨‍🚀</div>
+
+<div class="logo">teacher sadeghi</div>
+
+</div>
+
+<div class="screen" id="gameScreen">
+
+<div class="progress">
+<div class="progress-bar" id="progress"></div>
+</div>
+
+<div class="question-box">
+
+<div class="mission">
+🚀 مأموریت فضایی
+</div>
+
+<div class="question" id="question"></div>
+
+</div>
+
+<div class="options">
+
+<button class="answer" id="option1"></button>
+<button class="answer" id="option2"></button>
+
+</div>
+
+<div class="feedback" id="feedback"></div>
+
+<button class="next" id="next">
+سؤال بعدی 🚀
+</button>
+
+<div class="score">
+<span>⭐ امتیاز: <b id="score">۰</b></span>
+</div>
+
+</div>
+
+<div class="end" id="end">
+
+<div class="trophy">🏆</div>
+
+<h2>ماموریت تمام شد! 🎉</h2>
+
+<div class="final">
+امتیاز: <span id="finalScore">۰</span> از ۱۰
+</div>
+
+<div class="message" id="message"></div>
+
+<button class="restart" onclick="restart()">
+🚀 دوباره بازی کن
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const digits="۰۱۲۳۴۵۶۷۸۹";
+
+function fa(n){
+return String(n).replace(/[0-9]/g,x=>digits[x]);
+}
+
+let current=0;
+let score=0;
+let answered=false;
+let questions=[];
+
+function makeQuestions(){
+
+questions=[];
+
+for(let i=0;i<10;i++){
+
+let number=
+Math.floor(Math.random()*89)+10;
+
+let before=number-1;
+let after=number+1;
+
+let isBefore=Math.random()<.5;
+
+let correct=isBefore?before:after;
+
+let wrong;
+
+if(Math.random()<.5){
+
+wrong=correct+(Math.random()<.5?1:-2);
+
+}else{
+
+wrong=correct+(Math.random()<.5?2:-1);
+
+}
+
+if(wrong<10 || wrong>99 || wrong===correct){
+wrong=isBefore?number+1:number-1;
+}
+
+let options;
+
+if(Math.random()<.5){
+options=[correct,wrong];
+}else{
+options=[wrong,correct];
+}
+
+questions.push({
+number:number,
+before:isBefore,
+correct:correct,
+options:options,
+correctIndex:options[0]===correct?0:1
+});
+
+}
+
+}
+
+function sound(type){
+
+try{
+
+const C=window.AudioContext||window.webkitAudioContext;
+const ctx=new C();
+
+const o=ctx.createOscillator();
+const g=ctx.createGain();
+
+o.connect(g);
+g.connect(ctx.destination);
+
+if(type==="correct"){
+
+o.frequency.setValueAtTime(600,ctx.currentTime);
+o.frequency.setValueAtTime(800,ctx.currentTime+.12);
+o.frequency.setValueAtTime(1000,ctx.currentTime+.24);
+
+}else if(type==="wrong"){
+
+o.frequency.setValueAtTime(230,ctx.currentTime);
+o.frequency.setValueAtTime(150,ctx.currentTime+.2);
+
+}else{
+
+o.frequency.setValueAtTime(523,ctx.currentTime);
+o.frequency.setValueAtTime(659,ctx.currentTime+.13);
+o.frequency.setValueAtTime(784,ctx.currentTime+.26);
+o.frequency.setValueAtTime(1046,ctx.currentTime+.4);
+
+}
+
+g.gain.setValueAtTime(.001,ctx.currentTime);
+g.gain.exponentialRampToValueAtTime(.22,ctx.currentTime+.03);
+g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.8);
+
+o.start();
+o.stop(ctx.currentTime+.85);
+
+}catch(e){}
+
+}
+
+function speak(text){
+
+if("speechSynthesis" in window){
+
+speechSynthesis.cancel();
+
+let u=new SpeechSynthesisUtterance(text);
+
+u.lang="fa-IR";
+u.rate=.9;
+u.pitch=1.15;
+
+speechSynthesis.speak(u);
+
+}
+
+}
+
+function load(){
+
+answered=false;
+
+let q=questions[current];
+
+let word=q.before?"قبل از":"بعد از";
+
+document.getElementById("question").innerHTML=
+word+" <strong>"+fa(q.number)+"</strong> کدام است؟";
+
+document.getElementById("option1").textContent=
+fa(q.options[0]);
+
+document.getElementById("option2").textContent=
+fa(q.options[1]);
+
+document.getElementById("option1").className="answer";
+document.getElementById("option2").className="answer";
+
+document.getElementById("option1").disabled=false;
+document.getElementById("option2").disabled=false;
+
+document.getElementById("feedback").textContent="";
+document.getElementById("feedback").className="feedback";
+
+document.getElementById("next").style.display="none";
+
+document.getElementById("progress").style.width=
+((current+1)/10*100)+"%";
+
+document.getElementById("score").textContent=fa(score);
+
+}
+
+function answer(index){
+
+if(answered)return;
+
+answered=true;
+
+let q=questions[current];
+
+let selected=
+index===0?
+document.getElementById("option1"):
+document.getElementById("option2");
+
+let correctButton=
+q.correctIndex===0?
+document.getElementById("option1"):
+document.getElementById("option2");
+
+document.getElementById("option1").disabled=true;
+document.getElementById("option2").disabled=true;
+
+if(index===q.correctIndex){
+
+score++;
+
+selected.classList.add("correct");
+
+document.getElementById("feedback").textContent=
+"🚀 آفرین! درست گفتی!";
+
+document.getElementById("feedback").className=
+"feedback good";
+
+sound("correct");
+speak("آفرین! درست گفتی!");
+
+}else{
+
+selected.classList.add("wrong");
+correctButton.classList.add("correct");
+
+document.getElementById("feedback").textContent=
+"👾 اشکالی ندارد! دوباره تلاش کن";
+
+document.getElementById("feedback").className=
+"feedback bad";
+
+sound("wrong");
+speak("اشکالی ندارد! دوباره تلاش کن");
+
+}
+
+document.getElementById("score").textContent=fa(score);
+
+document.getElementById("next").style.display="block";
+
+}
+
+document.getElementById("option1").onclick=()=>{
+answer(0);
+};
+
+document.getElementById("option2").onclick=()=>{
+answer(1);
+};
+
+document.getElementById("next").onclick=()=>{
+
+current++;
+
+if(current>=10){
+
+finish();
+
+}else{
+
+load();
+
+}
+
+};
+
+function finish(){
+
+document.getElementById("gameScreen").style.display="none";
+
+document.getElementById("end").style.display="flex";
+
+document.getElementById("finalScore").textContent=fa(score);
+
+let message;
+
+if(score===10){
+
+message=
+"🌟 فوق‌العاده بود! 🌟<br>تو قهرمان کهکشان ریاضی هستی! 🚀";
+
+}else if(score>=8){
+
+message=
+"🎉 عالی بود!<br>ماموریت فضایی را خیلی خوب انجام دادی! 🚀";
+
+}else if(score>=5){
+
+message=
+"⭐ آفرین قهرمان!<br>با کمی تمرین قوی‌تر می‌شوی!";
+
+}else{
+
+message=
+"💙 خسته نباشی فضانورد!<br>دوباره تلاش کن و قوی‌تر برگرد! 🚀";
+
+}
+
+document.getElementById("message").innerHTML=message;
+
+sound("finish");
+
+setTimeout(()=>{
+
+speak(
+score===10?
+"آفرین قهرمان! تو قهرمان کهکشان ریاضی هستی!":
+"آفرین قهرمان! خسته نباشی!"
+);
+
+},400);
+
+confetti();
+
+}
+
+function confetti(){
+
+let symbols=["🚀","⭐","🌟","✨","🎉","🏆","🪐"];
+
+for(let i=0;i<35;i++){
+
+let x=document.createElement("div");
+
+x.className="confetti";
+
+x.textContent=
+symbols[Math.floor(Math.random()*symbols.length)];
+
+x.style.left=Math.random()*100+"vw";
+
+x.style.animationDelay=Math.random()*1.5+"s";
+
+document.body.appendChild(x);
+
+setTimeout(()=>x.remove(),4500);
+
+}
+
+}
+
+function restart(){
+
+current=0;
+score=0;
+
+makeQuestions();
+
+document.getElementById("end").style.display="none";
+document.getElementById("gameScreen").style.display="flex";
+
+load();
+
+}
+
+makeQuestions();
+load();
+
+</script>
+
+</body>
+</html>
