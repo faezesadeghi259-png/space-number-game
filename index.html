@@ -2,405 +2,1194 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Teacher Sadeghi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>بازی فضایی ریاضی | Teacher Sadeghi</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+}
 
 body{
-margin:0;
-min-height:100vh;
-font-family:Tahoma,Arial,sans-serif;
-color:#fff;
-overflow:hidden;
-background:
-radial-gradient(circle at 20% 20%,rgba(75,130,255,.35),transparent 18%),
-radial-gradient(circle at 80% 70%,rgba(160,55,255,.25),transparent 20%),
-linear-gradient(180deg,#03051d,#08052d 50%,#020313);
-display:flex;
-align-items:center;
-justify-content:center;
-padding:12px;
+  min-height:100vh;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px;
+
+  font-family:
+    Tahoma,
+    Arial,
+    sans-serif;
+
+  color:#fff;
+
+  background:
+    radial-gradient(circle at 20% 10%,rgba(48,113,255,.30),transparent 22%),
+    radial-gradient(circle at 80% 30%,rgba(169,48,255,.24),transparent 25%),
+    radial-gradient(circle at 50% 100%,rgba(0,221,255,.13),transparent 28%),
+    linear-gradient(145deg,#020617,#08052c 45%,#02030f);
 }
 
-body:before{
-content:"";
-position:fixed;
-inset:0;
-background-image:
-radial-gradient(circle,#fff 1px,transparent 1.5px),
-radial-gradient(circle,#b8eaff 1px,transparent 1.5px);
-background-size:73px 71px,113px 109px;
-background-position:10px 20px,35px 60px;
-opacity:.7;
-pointer-events:none;
+/* ستاره‌های زمینه */
+
+body::before,
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
 }
+
+body::before{
+  background-image:
+    radial-gradient(circle,rgba(255,255,255,.95) 0 1px,transparent 1.5px),
+    radial-gradient(circle,rgba(113,216,255,.8) 0 1px,transparent 1.6px),
+    radial-gradient(circle,rgba(255,205,92,.75) 0 1.2px,transparent 1.7px);
+
+  background-size:
+    83px 79px,
+    137px 131px,
+    191px 183px;
+
+  background-position:
+    12px 20px,
+    60px 80px,
+    30px 45px;
+
+  opacity:.65;
+  animation:starMove 18s linear infinite;
+}
+
+body::after{
+  background:
+    radial-gradient(circle at 30% 40%,rgba(79,193,255,.08),transparent 18%),
+    radial-gradient(circle at 70% 60%,rgba(180,80,255,.07),transparent 20%);
+  animation:nebula 7s ease-in-out infinite alternate;
+}
+
+/* قاب اصلی */
 
 .game{
-width:100%;
-max-width:560px;
-height:min(760px,96vh);
-position:relative;
-overflow:hidden;
-border-radius:32px;
-border:2px solid rgba(135,190,255,.45);
-background:
-radial-gradient(circle at 50% 15%,rgba(39,83,190,.35),transparent 30%),
-linear-gradient(180deg,#07113c,#10052f 70%,#03041a);
-box-shadow:
-0 0 35px rgba(48,126,255,.35),
-inset 0 0 50px rgba(70,80,255,.12);
+  width:100%;
+  max-width:600px;
+  height:min(850px,96vh);
+
+  position:relative;
+  overflow:hidden;
+
+  border-radius:34px;
+
+  border:1px solid rgba(136,216,255,.55);
+
+  background:
+    radial-gradient(circle at 50% 10%,rgba(48,107,255,.28),transparent 30%),
+    radial-gradient(circle at 20% 80%,rgba(170,44,255,.18),transparent 28%),
+    linear-gradient(180deg,#07143f,#100632 65%,#030414);
+
+  box-shadow:
+    0 0 20px rgba(52,182,255,.35),
+    0 0 70px rgba(77,67,255,.20),
+    inset 0 0 70px rgba(83,115,255,.12);
+
+  isolation:isolate;
 }
 
-.planet{
-position:absolute;
-border-radius:50%;
-pointer-events:none;
+/* نور بالای بازی */
+
+.game::before{
+  content:"";
+  position:absolute;
+  width:330px;
+  height:330px;
+  left:50%;
+  top:-210px;
+  transform:translateX(-50%);
+
+  background:radial-gradient(circle,
+    rgba(70,194,255,.35),
+    rgba(70,100,255,.12) 40%,
+    transparent 70%
+  );
+
+  filter:blur(5px);
+  pointer-events:none;
 }
 
-.planet.big{
-width:125px;
-height:125px;
-right:-48px;
-bottom:-35px;
-background:
-radial-gradient(circle at 35% 30%,#ffbf70,#bd542e 45%,#4d183d 80%);
-box-shadow:0 0 30px rgba(255,100,100,.35);
+/* ستاره‌های متحرک */
+
+.star{
+  position:absolute;
+  z-index:1;
+  color:#fff;
+  pointer-events:none;
+  animation:
+    twinkle 1.8s ease-in-out infinite alternate,
+    drift 5s ease-in-out infinite alternate;
 }
 
-.planet.small{
-width:55px;
-height:55px;
-left:18px;
-top:115px;
-background:
-radial-gradient(circle at 35% 30%,#71e8ff,#2465bb 55%,#17245e);
-box-shadow:0 0 20px rgba(65,190,255,.5);
+.star1{top:35px;left:7%;font-size:18px}
+.star2{top:80px;right:9%;font-size:12px;animation-delay:.4s}
+.star3{top:180px;left:13%;font-size:25px;animation-delay:.8s}
+.star4{top:255px;right:7%;font-size:16px;animation-delay:.2s}
+.star5{top:380px;left:6%;font-size:12px;animation-delay:1s}
+.star6{top:480px;right:12%;font-size:23px;animation-delay:.5s}
+.star7{top:610px;left:9%;font-size:15px;animation-delay:.7s}
+.star8{top:690px;right:8%;font-size:12px;animation-delay:1.2s}
+
+/* سیاره بزرگ */
+
+.planet-big{
+  position:absolute;
+  width:145px;
+  height:145px;
+  right:-55px;
+  bottom:-35px;
+
+  border-radius:50%;
+
+  background:
+    radial-gradient(circle at 30% 25%,#ffd08a 0 8%,transparent 9%),
+    radial-gradient(circle at 35% 30%,#ffb66c,#d85a3a 38%,#73285b 70%,#281443);
+
+  box-shadow:
+    inset -18px -20px 35px rgba(0,0,0,.5),
+    0 0 40px rgba(255,98,98,.25);
+
+  z-index:1;
 }
 
-.ring{
-position:absolute;
-width:180px;
-height:35px;
-border:6px solid rgba(255,193,85,.65);
-border-radius:50%;
-right:-75px;
-bottom:8px;
-transform:rotate(-18deg);
+/* سیاره آبی */
+
+.planet-blue{
+  position:absolute;
+  width:58px;
+  height:58px;
+  left:20px;
+  top:105px;
+
+  border-radius:50%;
+
+  background:
+    radial-gradient(circle at 30% 25%,#a4f5ff,#3e9de8 40%,#24317f 72%,#11163e);
+
+  box-shadow:
+    inset -8px -10px 15px rgba(0,0,0,.35),
+    0 0 28px rgba(62,202,255,.45);
+
+  z-index:1;
+
+  animation:planetFloat 4s ease-in-out infinite;
 }
+
+/* سیاره حلقه‌دار */
+
+.ring-planet{
+  position:absolute;
+  width:150px;
+  height:42px;
+  right:-65px;
+  bottom:13px;
+
+  border:5px solid rgba(255,207,92,.72);
+  border-radius:50%;
+
+  transform:rotate(-18deg);
+
+  box-shadow:
+    0 0 12px rgba(255,203,70,.45);
+
+  z-index:2;
+}
+
+/* شهاب */
+
+.meteor{
+  position:absolute;
+  width:85px;
+  height:3px;
+  border-radius:50%;
+  background:linear-gradient(90deg,transparent,#fff,#67dcff);
+
+  transform:rotate(-28deg);
+
+  opacity:.65;
+  z-index:1;
+
+  animation:meteor 7s linear infinite;
+}
+
+.meteor1{
+  top:160px;
+  right:-100px;
+}
+
+.meteor2{
+  top:430px;
+  left:-100px;
+  animation-delay:3s;
+}
+
+/* صفحه شروع */
+
+.start-screen{
+  position:absolute;
+  inset:0;
+  z-index:20;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  padding:28px 22px;
+
+  text-align:center;
+
+  background:
+    radial-gradient(circle at 50% 18%,rgba(69,157,255,.28),transparent 28%),
+    radial-gradient(circle at 20% 70%,rgba(157,48,255,.18),transparent 25%),
+    linear-gradient(180deg,rgba(3,7,32,.96),rgba(12,5,40,.98));
+}
+
+.start-screen.hidden{
+  display:none;
+}
+
+/* سفینه */
+
+.rocket{
+  font-size:76px;
+  line-height:1;
+
+  filter:
+    drop-shadow(0 0 10px #5adfff)
+    drop-shadow(0 0 25px rgba(65,135,255,.8));
+
+  animation:
+    rocketFloat 2.6s ease-in-out infinite;
+
+  margin-bottom:8px;
+}
+
+/* عنوان */
+
+.game-title{
+  margin:4px 0 5px;
+
+  font-size:32px;
+  font-weight:900;
+  line-height:1.45;
+
+  color:#fff;
+
+  text-shadow:
+    0 0 8px #49d7ff,
+    0 0 22px rgba(63,139,255,.8);
+}
+
+.game-subtitle{
+  font-size:17px;
+  color:#a9edff;
+  font-weight:bold;
+  margin-bottom:18px;
+}
+
+/* Teacher Sadeghi */
+
+.teacher{
+  direction:ltr;
+
+  font-family:
+    "Trebuchet MS",
+    Arial,
+    sans-serif;
+
+  font-size:18px;
+  font-weight:800;
+  letter-spacing:1.5px;
+
+  color:#dff9ff;
+
+  text-shadow:
+    0 0 7px #4ddcff,
+    0 0 15px rgba(77,180,255,.65);
+
+  margin-bottom:16px;
+}
+
+/* کارت شروع */
+
+.start-card{
+  width:100%;
+  max-width:470px;
+
+  padding:19px;
+
+  border-radius:26px;
+
+  border:1px solid rgba(119,218,255,.45);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(23,47,108,.62),
+      rgba(45,17,93,.56)
+    );
+
+  box-shadow:
+    inset 0 0 25px rgba(98,152,255,.08),
+    0 0 30px rgba(55,137,255,.18);
+
+  backdrop-filter:blur(12px);
+}
+
+/* عنوان بخش */
+
+.section-title{
+  font-size:21px;
+  font-weight:900;
+  color:#75e6ff;
+  margin-bottom:11px;
+}
+
+/* توضیحات */
+
+.instructions{
+  font-size:15px;
+  line-height:2.05;
+  color:#f0f8ff;
+  margin:0 0 15px;
+}
+
+.instructions strong{
+  color:#ffd95a;
+}
+
+/* ورودی نام */
+
+.name-label{
+  display:block;
+  font-size:16px;
+  font-weight:bold;
+  color:#d9f8ff;
+  margin-bottom:8px;
+}
+
+.name-input{
+  width:100%;
+  height:55px;
+
+  border-radius:17px;
+
+  border:2px solid rgba(86,214,255,.55);
+
+  outline:none;
+
+  padding:0 17px;
+
+  text-align:center;
+
+  font-family:Tahoma,Arial,sans-serif;
+  font-size:18px;
+  font-weight:bold;
+
+  color:#fff;
+
+  background:rgba(3,12,45,.75);
+
+  box-shadow:
+    inset 0 0 15px rgba(0,0,0,.2),
+    0 0 15px rgba(54,180,255,.08);
+}
+
+.name-input::placeholder{
+  color:#8fa9c5;
+}
+
+.name-input:focus{
+  border-color:#65e7ff;
+
+  box-shadow:
+    0 0 0 3px rgba(74,214,255,.12),
+    0 0 24px rgba(60,210,255,.28);
+}
+
+/* دکمه شروع */
+
+.start-button{
+  width:100%;
+  height:62px;
+
+  margin-top:15px;
+
+  border:0;
+  border-radius:20px;
+
+  cursor:pointer;
+
+  font-family:Tahoma,Arial,sans-serif;
+  font-size:21px;
+  font-weight:900;
+
+  color:#fff;
+
+  background:
+    linear-gradient(
+      100deg,
+      #087fc5,
+      #6450ff,
+      #a63dff
+    );
+
+  box-shadow:
+    0 7px 0 #27216c,
+    0 0 25px rgba(90,125,255,.4);
+
+  transition:.18s;
+
+  position:relative;
+  overflow:hidden;
+}
+
+.start-button::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:60%;
+  height:100%;
+
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.3),
+    transparent
+  );
+
+  transform:skewX(-20deg);
+
+  animation:buttonShine 3s infinite;
+}
+
+.start-button:active{
+  transform:translateY(5px);
+  box-shadow:0 2px 0 #27216c;
+}
+
+/* هدر بازی */
 
 .header{
-height:155px;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-position:relative;
-z-index:2;
+  height:145px;
+
+  position:relative;
+  z-index:5;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
 }
 
-.robot{
-font-size:55px;
-filter:drop-shadow(0 0 12px #57d9ff);
-animation:float 2.5s ease-in-out infinite;
+.header-rocket{
+  font-size:52px;
+
+  filter:
+    drop-shadow(0 0 8px #4fdfff)
+    drop-shadow(0 0 18px #457dff);
+
+  animation:rocketFloat 2.5s ease-in-out infinite;
 }
 
 .logo{
-font-family:Arial,sans-serif;
-font-size:22px;
-font-weight:900;
-letter-spacing:1px;
-color:#9ceaff;
-text-shadow:
-0 0 7px #38bfff,
-0 0 18px #278dff;
-direction:ltr;
-margin-top:3px;
+  direction:ltr;
+
+  font-family:
+    "Trebuchet MS",
+    Arial,
+    sans-serif;
+
+  font-size:20px;
+  font-weight:900;
+
+  letter-spacing:1.5px;
+
+  color:#a8efff;
+
+  text-shadow:
+    0 0 7px #39c9ff,
+    0 0 18px #247dff;
+
+  margin-top:5px;
 }
 
-.stars{
-position:absolute;
-font-size:18px;
-animation:twinkle 1.5s infinite alternate;
-}
-
-.a{top:20px;left:28px}
-.b{top:38px;right:35px}
-.c{top:100px;right:85px}
-.d{top:120px;left:80px}
+/* صفحه بازی */
 
 .screen{
-position:relative;
-z-index:3;
-padding:0 20px 20px;
-height:calc(100% - 155px);
-display:flex;
-flex-direction:column;
+  position:relative;
+  z-index:4;
+
+  padding:0 20px 18px;
+
+  height:calc(100% - 145px);
+
+  display:flex;
+  flex-direction:column;
 }
 
+/* اطلاعات دانش آموز */
+
+.player-name{
+  text-align:center;
+
+  margin-bottom:10px;
+
+  color:#d7f8ff;
+
+  font-size:16px;
+  font-weight:bold;
+}
+
+.player-name span{
+  color:#ffd85a;
+}
+
+/* نوار پیشرفت */
+
 .progress{
-height:10px;
-background:rgba(255,255,255,.12);
-border-radius:20px;
-overflow:hidden;
-margin-bottom:15px;
+  height:10px;
+
+  background:rgba(255,255,255,.10);
+
+  border-radius:20px;
+
+  overflow:hidden;
+
+  margin-bottom:14px;
+
+  border:1px solid rgba(108,196,255,.16);
 }
 
 .progress-bar{
-height:100%;
-width:10%;
-background:linear-gradient(90deg,#28d8ff,#8d72ff,#ff8acb);
-box-shadow:0 0 12px #49cfff;
-transition:.4s;
+  height:100%;
+  width:10%;
+
+  background:
+    linear-gradient(
+      90deg,
+      #26dfff,
+      #7868ff,
+      #ff7bc7
+    );
+
+  box-shadow:
+    0 0 12px #49d8ff;
+
+  transition:.45s;
 }
 
+/* سؤال */
+
 .question-box{
-background:rgba(9,18,63,.82);
-border:2px solid rgba(94,190,255,.45);
-border-radius:25px;
-padding:22px 12px;
-text-align:center;
-box-shadow:
-0 0 25px rgba(38,127,255,.15),
-inset 0 0 20px rgba(90,120,255,.08);
-margin-bottom:18px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(8,24,76,.88),
+      rgba(34,10,68,.78)
+    );
+
+  border:2px solid rgba(99,200,255,.40);
+
+  border-radius:26px;
+
+  padding:22px 12px;
+
+  text-align:center;
+
+  box-shadow:
+    0 0 25px rgba(38,127,255,.15),
+    inset 0 0 25px rgba(90,120,255,.08);
+
+  margin-bottom:18px;
 }
 
 .mission{
-font-size:14px;
-color:#8eeaff;
-margin-bottom:10px;
-font-weight:bold;
+  font-size:15px;
+  color:#82eaff;
+
+  margin-bottom:9px;
+
+  font-weight:900;
 }
 
 .question{
-font-size:30px;
-font-weight:900;
-line-height:1.8;
-text-shadow:0 0 12px rgba(92,206,255,.45);
+  font-size:29px;
+
+  font-weight:900;
+
+  line-height:1.8;
+
+  text-shadow:
+    0 0 12px rgba(92,206,255,.45);
 }
 
+.question strong{
+  color:#ffd95a;
+
+  font-size:36px;
+
+  text-shadow:
+    0 0 12px rgba(255,205,80,.6);
+}
+
+/* گزینه‌ها */
+
 .options{
-display:flex;
-gap:12px;
-direction:rtl;
+  display:flex;
+
+  gap:12px;
+
+  direction:rtl;
 }
 
 .answer{
-flex:1;
-height:92px;
-border-radius:22px;
-font-family:Tahoma,Arial,sans-serif;
-font-size:30px;
-font-weight:900;
-cursor:pointer;
-color:white;
-transition:.15s;
+  flex:1;
+
+  min-width:0;
+
+  height:88px;
+
+  border-radius:22px;
+
+  font-family:Tahoma,Arial,sans-serif;
+
+  font-size:30px;
+
+  font-weight:900;
+
+  cursor:pointer;
+
+  color:white;
+
+  transition:.15s;
+
+  touch-action:manipulation;
 }
 
 .answer:first-child{
-background:linear-gradient(145deg,#087dc0,#123d9c);
-border:2px solid #4ddaff;
-box-shadow:0 7px 0 #062d68,0 0 18px rgba(50,210,255,.25);
+  background:
+    linear-gradient(145deg,#087dc0,#123d9c);
+
+  border:2px solid #4ddaff;
+
+  box-shadow:
+    0 7px 0 #062d68,
+    0 0 18px rgba(50,210,255,.25);
 }
 
 .answer:last-child{
-background:linear-gradient(145deg,#e76a24,#a92d59);
-border:2px solid #ffad61;
-box-shadow:0 7px 0 #651d43,0 0 18px rgba(255,120,70,.25);
+  background:
+    linear-gradient(145deg,#e76a24,#a92d59);
+
+  border:2px solid #ffad61;
+
+  box-shadow:
+    0 7px 0 #651d43,
+    0 0 18px rgba(255,120,70,.25);
 }
 
 .answer:active{
-transform:translateY(6px);
-box-shadow:0 2px 0 rgba(0,0,0,.5);
+  transform:translateY(6px);
+  box-shadow:0 2px 0 rgba(0,0,0,.5);
 }
 
 .answer.correct{
-background:linear-gradient(145deg,#18c878,#087d61)!important;
-border-color:#7dffbc!important;
-box-shadow:0 0 25px #29ef9b!important;
+  background:
+    linear-gradient(145deg,#18c878,#087d61)!important;
+
+  border-color:#7dffbc!important;
+
+  box-shadow:
+    0 0 25px #29ef9b!important;
+
+  animation:correctPulse .6s ease;
 }
 
 .answer.wrong{
-background:linear-gradient(145deg,#d83252,#721b49)!important;
-border-color:#ff8498!important;
-box-shadow:0 0 20px #ff315d!important;
+  background:
+    linear-gradient(145deg,#d83252,#721b49)!important;
+
+  border-color:#ff8498!important;
+
+  box-shadow:
+    0 0 20px #ff315d!important;
+
+  animation:shake .4s ease;
 }
 
+/* بازخورد */
+
 .feedback{
-min-height:55px;
-display:flex;
-align-items:center;
-justify-content:center;
-text-align:center;
-font-size:19px;
-font-weight:900;
+  min-height:60px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  text-align:center;
+
+  font-size:19px;
+
+  font-weight:900;
 }
 
 .good{
-color:#6dffb0;
-text-shadow:0 0 10px #27ff9b;
+  color:#6dffb0;
+
+  text-shadow:
+    0 0 10px #27ff9b;
 }
 
 .bad{
-color:#ff91a5;
-text-shadow:0 0 10px #ff355e;
+  color:#ff91a5;
+
+  text-shadow:
+    0 0 10px #ff355e;
 }
+
+/* دکمه سؤال بعد */
 
 .next{
-display:none;
-width:100%;
-height:55px;
-border:0;
-border-radius:18px;
-font-family:Tahoma;
-font-size:18px;
-font-weight:900;
-color:#fff;
-background:linear-gradient(90deg,#684eff,#ae4cff);
-box-shadow:0 5px 0 #38258d;
-cursor:pointer;
+  display:none;
+
+  width:100%;
+
+  height:55px;
+
+  border:0;
+
+  border-radius:18px;
+
+  font-family:Tahoma,Arial,sans-serif;
+
+  font-size:18px;
+
+  font-weight:900;
+
+  color:#fff;
+
+  background:
+    linear-gradient(
+      90deg,
+      #684eff,
+      #ae4cff
+    );
+
+  box-shadow:
+    0 5px 0 #38258d,
+    0 0 20px rgba(135,77,255,.25);
+
+  cursor:pointer;
 }
 
+/* امتیاز */
+
 .score{
-margin-top:auto;
-text-align:center;
-padding-top:12px;
+  margin-top:auto;
+
+  text-align:center;
+
+  padding-top:10px;
 }
 
 .score span{
-display:inline-block;
-padding:8px 18px;
-border-radius:20px;
-background:rgba(255,211,75,.12);
-border:1px solid rgba(255,211,75,.35);
-color:#ffd85a;
-font-weight:900;
+  display:inline-block;
+
+  padding:8px 18px;
+
+  border-radius:20px;
+
+  background:rgba(255,211,75,.12);
+
+  border:1px solid rgba(255,211,75,.35);
+
+  color:#ffd85a;
+
+  font-weight:900;
+
+  box-shadow:0 0 15px rgba(255,205,75,.08);
 }
 
+/* صفحه پایان */
+
 .end{
-display:none;
-position:absolute;
-inset:0;
-z-index:10;
-background:
-radial-gradient(circle at 50% 35%,rgba(71,75,190,.4),transparent 30%),
-linear-gradient(180deg,#05082a,#12052d);
-align-items:center;
-justify-content:center;
-flex-direction:column;
-text-align:center;
-padding:25px;
+  display:none;
+
+  position:absolute;
+  inset:0;
+
+  z-index:30;
+
+  background:
+    radial-gradient(circle at 50% 30%,rgba(71,75,190,.45),transparent 30%),
+    linear-gradient(180deg,#05082a,#12052d);
+
+  align-items:center;
+  justify-content:center;
+
+  flex-direction:column;
+
+  text-align:center;
+
+  padding:25px;
 }
 
 .trophy{
-font-size:85px;
-filter:drop-shadow(0 0 18px #ffd84d);
-animation:bounce 1s infinite;
+  font-size:82px;
+
+  filter:
+    drop-shadow(0 0 18px #ffd84d);
+
+  animation:bounce 1s infinite;
 }
 
 .end h2{
-font-size:32px;
-margin:12px 0;
-color:#ffd85a;
-text-shadow:0 0 15px #ff9d2e;
+  font-size:30px;
+
+  margin:10px 0;
+
+  color:#ffd85a;
+
+  text-shadow:
+    0 0 15px #ff9d2e;
 }
 
 .final{
-font-size:25px;
-font-weight:900;
-color:#fff;
-margin:10px 0 18px;
+  font-size:24px;
+
+  font-weight:900;
+
+  color:#fff;
+
+  margin:8px 0 15px;
+}
+
+.final span{
+  color:#ffd85a;
 }
 
 .message{
-font-size:18px;
-line-height:2;
-color:#aeeaff;
-margin-bottom:22px;
+  font-size:18px;
+
+  line-height:2;
+
+  color:#aeeaff;
+
+  margin-bottom:20px;
 }
 
 .restart{
-border:0;
-border-radius:20px;
-padding:15px 30px;
-font-family:Tahoma;
-font-size:18px;
-font-weight:900;
-color:#fff;
-background:linear-gradient(90deg,#087dc0,#7254ff);
-box-shadow:0 6px 0 #173078;
-cursor:pointer;
+  border:0;
+
+  border-radius:20px;
+
+  padding:15px 30px;
+
+  font-family:Tahoma,Arial,sans-serif;
+
+  font-size:18px;
+
+  font-weight:900;
+
+  color:#fff;
+
+  background:
+    linear-gradient(
+      90deg,
+      #087dc0,
+      #7254ff
+    );
+
+  box-shadow:
+    0 6px 0 #173078;
+
+  cursor:pointer;
 }
+
+/* کنفتی */
 
 .confetti{
-position:fixed;
-top:-30px;
-font-size:25px;
-z-index:100;
-animation:fall 3s linear forwards;
-pointer-events:none;
+  position:fixed;
+
+  top:-30px;
+
+  font-size:25px;
+
+  z-index:100;
+
+  animation:fall 3s linear forwards;
+
+  pointer-events:none;
 }
 
-@keyframes float{
-0%,100%{transform:translateY(0)}
-50%{transform:translateY(-9px)}
+/* انیمیشن‌ها */
+
+@keyframes starMove{
+  from{
+    transform:translateY(0);
+  }
+
+  to{
+    transform:translateY(35px);
+  }
+}
+
+@keyframes nebula{
+  from{
+    opacity:.7;
+    transform:scale(1);
+  }
+
+  to{
+    opacity:1;
+    transform:scale(1.06);
+  }
 }
 
 @keyframes twinkle{
-from{opacity:.35;transform:scale(.8)}
-to{opacity:1;transform:scale(1.2)}
+  from{
+    opacity:.25;
+    transform:scale(.75);
+  }
+
+  to{
+    opacity:1;
+    transform:scale(1.25);
+  }
+}
+
+@keyframes drift{
+  from{
+    margin-top:0;
+  }
+
+  to{
+    margin-top:8px;
+  }
+}
+
+@keyframes rocketFloat{
+  0%,100%{
+    transform:translateY(0) rotate(-2deg);
+  }
+
+  50%{
+    transform:translateY(-10px) rotate(2deg);
+  }
+}
+
+@keyframes planetFloat{
+  0%,100%{
+    transform:translateY(0);
+  }
+
+  50%{
+    transform:translateY(-7px);
+  }
+}
+
+@keyframes meteor{
+  0%{
+    transform:translate(0,0) rotate(-28deg);
+    opacity:0;
+  }
+
+  10%{
+    opacity:.8;
+  }
+
+  40%{
+    opacity:.7;
+  }
+
+  100%{
+    transform:translate(-600px,260px) rotate(-28deg);
+    opacity:0;
+  }
+}
+
+@keyframes buttonShine{
+  0%{
+    left:-100%;
+  }
+
+  35%,100%{
+    left:140%;
+  }
+}
+
+@keyframes correctPulse{
+  0%{
+    transform:scale(1);
+  }
+
+  50%{
+    transform:scale(1.06);
+  }
+
+  100%{
+    transform:scale(1);
+  }
+}
+
+@keyframes shake{
+  0%,100%{
+    transform:translateX(0);
+  }
+
+  25%{
+    transform:translateX(-7px);
+  }
+
+  75%{
+    transform:translateX(7px);
+  }
 }
 
 @keyframes bounce{
-0%,100%{transform:translateY(0)}
-50%{transform:translateY(-15px)}
+  0%,100%{
+    transform:translateY(0);
+  }
+
+  50%{
+    transform:translateY(-15px);
+  }
 }
 
 @keyframes fall{
-to{
-transform:translateY(110vh) rotate(500deg);
-opacity:0;
+  to{
+    transform:translateY(110vh) rotate(500deg);
+    opacity:0;
+  }
 }
-}
+
+/* موبایل */
 
 @media(max-width:430px){
 
-.game{
-height:96vh;
-border-radius:25px;
+  body{
+    padding:0;
+  }
+
+  .game{
+    width:100%;
+    height:100vh;
+    max-width:none;
+    border-radius:0;
+    border:0;
+  }
+
+  .start-screen{
+    padding:20px 15px;
+  }
+
+  .rocket{
+    font-size:64px;
+  }
+
+  .game-title{
+    font-size:26px;
+  }
+
+  .game-subtitle{
+    font-size:15px;
+  }
+
+  .start-card{
+    padding:16px;
+  }
+
+  .instructions{
+    font-size:14px;
+    line-height:1.9;
+  }
+
+  .teacher{
+    font-size:16px;
+  }
+
+  .header{
+    height:135px;
+  }
+
+  .header-rocket{
+    font-size:46px;
+  }
+
+  .logo{
+    font-size:17px;
+  }
+
+  .screen{
+    height:calc(100% - 135px);
+    padding:0 13px 14px;
+  }
+
+  .question{
+    font-size:24px;
+  }
+
+  .question strong{
+    font-size:31px;
+  }
+
+  .answer{
+    height:76px;
+    font-size:26px;
+  }
+
+  .question-box{
+    padding:17px 8px;
+  }
+
+  .feedback{
+    min-height:55px;
+    font-size:17px;
+  }
+
 }
 
-.header{
-height:140px;
-}
+@media(max-height:700px){
 
-.robot{
-font-size:48px;
-}
+  .start-screen{
+    justify-content:flex-start;
+    overflow-y:auto;
+  }
 
-.logo{
-font-size:19px;
-}
+  .rocket{
+    font-size:55px;
+  }
 
-.screen{
-height:calc(100% - 140px);
-padding:0 14px 14px;
-}
+  .game-title{
+    font-size:24px;
+  }
 
-.question{
-font-size:25px;
-}
+  .start-card{
+    padding:14px;
+  }
 
-.answer{
-height:75px;
-font-size:26px;
-}
-
-.question-box{
-padding:18px 8px;
-}
+  .instructions{
+    margin-bottom:9px;
+  }
 
 }
 </style>
@@ -410,413 +1199,903 @@ padding:18px 8px;
 
 <div class="game">
 
-<div class="planet big"></div>
-<div class="planet small"></div>
-<div class="ring"></div>
+  <!-- عناصر فضایی -->
 
-<div class="header">
+  <div class="planet-big"></div>
+  <div class="planet-blue"></div>
+  <div class="ring-planet"></div>
 
-<div class="stars a">✦</div>
-<div class="stars b">✧</div>
-<div class="stars c">⭐</div>
-<div class="stars d">✦</div>
+  <div class="meteor meteor1"></div>
+  <div class="meteor meteor2"></div>
 
-<div class="robot">👨‍🚀</div>
+  <div class="star star1">✦</div>
+  <div class="star star2">✧</div>
+  <div class="star star3">⭐</div>
+  <div class="star star4">✦</div>
+  <div class="star star5">✧</div>
+  <div class="star star6">⭐</div>
+  <div class="star star7">✦</div>
+  <div class="star star8">✧</div>
 
-<div class="logo">teacher sadeghi</div>
+
+  <!-- صفحه آغاز -->
+
+  <div class="start-screen" id="startScreen">
+
+    <div class="rocket">🚀</div>
+
+    <div class="game-title">
+      🚀 مأموریت فضایی ریاضی
+    </div>
+
+    <div class="game-subtitle">
+      آماده‌ای یک ماجراجویی هیجان‌انگیز را آغاز کنی؟ ⭐
+    </div>
+
+    <div class="teacher">
+      Teacher Sadeghi
+    </div>
+
+    <div class="start-card">
+
+      <div class="section-title">
+        🌟 چطور بازی کنیم؟
+      </div>
+
+      <p class="instructions">
+        در هر مرحله یک سؤال درباره‌ی <strong>عددهای قبل و بعد</strong>
+        از تو پرسیده می‌شود.<br>
+        پاسخ درست را از بین دو گزینه انتخاب کن و
+        با کسب امتیاز بیشتر، به یک
+        <strong>قهرمان کهکشان ریاضی</strong> تبدیل شو! 🚀
+      </p>
+
+      <label class="name-label" for="studentName">
+        👩‍🚀 نام دانش‌آموز را وارد کن:
+      </label>
+
+      <input
+        id="studentName"
+        class="name-input"
+        type="text"
+        maxlength="25"
+        autocomplete="off"
+        placeholder="نام خودت را اینجا بنویس..."
+      >
+
+      <button class="start-button" id="startButton">
+        🚀 شروع مأموریت
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- سربرگ بازی -->
+
+  <div class="header">
+
+    <div class="header-rocket">
+      👨‍🚀
+    </div>
+
+    <div class="logo">
+      Teacher Sadeghi
+    </div>
+
+  </div>
+
+
+  <!-- صفحه اصلی بازی -->
+
+  <div class="screen" id="gameScreen">
+
+    <div class="player-name">
+      فضانورد: <span id="playerDisplay">دانش‌آموز</span> 👩‍🚀
+    </div>
+
+    <div class="progress">
+      <div class="progress-bar" id="progress"></div>
+    </div>
+
+    <div class="question-box">
+
+      <div class="mission">
+        🚀 مأموریت فضایی
+      </div>
+
+      <div class="question" id="question"></div>
+
+    </div>
+
+    <div class="options">
+
+      <button class="answer" id="option1"></button>
+
+      <button class="answer" id="option2"></button>
+
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <button class="next" id="next">
+      سؤال بعدی 🚀
+    </button>
+
+    <div class="score">
+      <span>
+        ⭐ امتیاز:
+        <b id="score">۰</b>
+      </span>
+    </div>
+
+  </div>
+
+
+  <!-- صفحه پایان -->
+
+  <div class="end" id="end">
+
+    <div class="trophy">
+      🏆
+    </div>
+
+    <h2>
+      مأموریت تمام شد! 🎉
+    </h2>
+
+    <div class="final">
+      <span id="playerFinalName">دانش‌آموز</span>
+      <br>
+      امتیاز:
+      <span id="finalScore">۰</span>
+      از ۱۰
+    </div>
+
+    <div class="message" id="message"></div>
+
+    <button class="restart" onclick="restart()">
+      🚀 دوباره بازی کن
+    </button>
+
+  </div>
 
 </div>
 
-<div class="screen" id="gameScreen">
-
-<div class="progress">
-<div class="progress-bar" id="progress"></div>
-</div>
-
-<div class="question-box">
-
-<div class="mission">
-🚀 مأموریت فضایی
-</div>
-
-<div class="question" id="question"></div>
-
-</div>
-
-<div class="options">
-
-<button class="answer" id="option1"></button>
-<button class="answer" id="option2"></button>
-
-</div>
-
-<div class="feedback" id="feedback"></div>
-
-<button class="next" id="next">
-سؤال بعدی 🚀
-</button>
-
-<div class="score">
-<span>⭐ امتیاز: <b id="score">۰</b></span>
-</div>
-
-</div>
-
-<div class="end" id="end">
-
-<div class="trophy">🏆</div>
-
-<h2>ماموریت تمام شد! 🎉</h2>
-
-<div class="final">
-امتیاز: <span id="finalScore">۰</span> از ۱۰
-</div>
-
-<div class="message" id="message"></div>
-
-<button class="restart" onclick="restart()">
-🚀 دوباره بازی کن
-</button>
-
-</div>
-
-</div>
 
 <script>
 
 const digits="۰۱۲۳۴۵۶۷۸۹";
 
 function fa(n){
-return String(n).replace(/[0-9]/g,x=>digits[x]);
+  return String(n).replace(/[0-9]/g,x=>digits[x]);
 }
 
 let current=0;
 let score=0;
 let answered=false;
 let questions=[];
+let studentName="";
+
+
+/* ساخت سؤال‌ها */
 
 function makeQuestions(){
 
-questions=[];
+  questions=[];
 
-for(let i=0;i<10;i++){
+  for(let i=0;i<10;i++){
 
-let number=
-Math.floor(Math.random()*89)+10;
+    let number=
+      Math.floor(Math.random()*89)+10;
 
-let before=number-1;
-let after=number+1;
+    let before=number-1;
+    let after=number+1;
 
-let isBefore=Math.random()<.5;
+    let isBefore=Math.random()<.5;
 
-let correct=isBefore?before:after;
+    let correct=isBefore?before:after;
 
-let wrong;
+    let wrong;
 
-if(Math.random()<.5){
+    if(Math.random()<.5){
 
-wrong=correct+(Math.random()<.5?1:-2);
+      wrong=
+        correct+
+        (Math.random()<.5?1:-2);
 
-}else{
+    }else{
 
-wrong=correct+(Math.random()<.5?2:-1);
+      wrong=
+        correct+
+        (Math.random()<.5?2:-1);
+
+    }
+
+    if(
+      wrong<10 ||
+      wrong>99 ||
+      wrong===correct
+    ){
+
+      wrong=
+        isBefore?
+        number+1:
+        number-1;
+
+    }
+
+    let options;
+
+    if(Math.random()<.5){
+
+      options=[correct,wrong];
+
+    }else{
+
+      options=[wrong,correct];
+
+    }
+
+    questions.push({
+
+      number:number,
+
+      before:isBefore,
+
+      correct:correct,
+
+      options:options,
+
+      correctIndex:
+        options[0]===correct?0:1
+
+    });
+
+  }
 
 }
 
-if(wrong<10 || wrong>99 || wrong===correct){
-wrong=isBefore?number+1:number-1;
-}
 
-let options;
-
-if(Math.random()<.5){
-options=[correct,wrong];
-}else{
-options=[wrong,correct];
-}
-
-questions.push({
-number:number,
-before:isBefore,
-correct:correct,
-options:options,
-correctIndex:options[0]===correct?0:1
-});
-
-}
-
-}
+/* صدا */
 
 function sound(type){
 
-try{
+  try{
 
-const C=window.AudioContext||window.webkitAudioContext;
-const ctx=new C();
+    const C=
+      window.AudioContext||
+      window.webkitAudioContext;
 
-const o=ctx.createOscillator();
-const g=ctx.createGain();
+    const ctx=new C();
 
-o.connect(g);
-g.connect(ctx.destination);
+    const o=ctx.createOscillator();
 
-if(type==="correct"){
+    const g=ctx.createGain();
 
-o.frequency.setValueAtTime(600,ctx.currentTime);
-o.frequency.setValueAtTime(800,ctx.currentTime+.12);
-o.frequency.setValueAtTime(1000,ctx.currentTime+.24);
+    o.connect(g);
+    g.connect(ctx.destination);
 
-}else if(type==="wrong"){
+    if(type==="correct"){
 
-o.frequency.setValueAtTime(230,ctx.currentTime);
-o.frequency.setValueAtTime(150,ctx.currentTime+.2);
+      o.frequency.setValueAtTime(
+        600,
+        ctx.currentTime
+      );
 
-}else{
+      o.frequency.setValueAtTime(
+        800,
+        ctx.currentTime+.12
+      );
 
-o.frequency.setValueAtTime(523,ctx.currentTime);
-o.frequency.setValueAtTime(659,ctx.currentTime+.13);
-o.frequency.setValueAtTime(784,ctx.currentTime+.26);
-o.frequency.setValueAtTime(1046,ctx.currentTime+.4);
+      o.frequency.setValueAtTime(
+        1000,
+        ctx.currentTime+.24
+      );
+
+    }
+
+    else if(type==="wrong"){
+
+      o.frequency.setValueAtTime(
+        230,
+        ctx.currentTime
+      );
+
+      o.frequency.setValueAtTime(
+        150,
+        ctx.currentTime+.2
+      );
+
+    }
+
+    else{
+
+      o.frequency.setValueAtTime(
+        523,
+        ctx.currentTime
+      );
+
+      o.frequency.setValueAtTime(
+        659,
+        ctx.currentTime+.13
+      );
+
+      o.frequency.setValueAtTime(
+        784,
+        ctx.currentTime+.26
+      );
+
+      o.frequency.setValueAtTime(
+        1046,
+        ctx.currentTime+.4
+      );
+
+    }
+
+    g.gain.setValueAtTime(
+      .001,
+      ctx.currentTime
+    );
+
+    g.gain.exponentialRampToValueAtTime(
+      .22,
+      ctx.currentTime+.03
+    );
+
+    g.gain.exponentialRampToValueAtTime(
+      .001,
+      ctx.currentTime+.8
+    );
+
+    o.start();
+
+    o.stop(
+      ctx.currentTime+.85
+    );
+
+  }catch(e){}
 
 }
 
-g.gain.setValueAtTime(.001,ctx.currentTime);
-g.gain.exponentialRampToValueAtTime(.22,ctx.currentTime+.03);
-g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.8);
 
-o.start();
-o.stop(ctx.currentTime+.85);
-
-}catch(e){}
-
-}
+/* صدای فارسی مرورگر */
 
 function speak(text){
 
-if("speechSynthesis" in window){
+  if(
+    "speechSynthesis" in window
+  ){
 
-speechSynthesis.cancel();
+    speechSynthesis.cancel();
 
-let u=new SpeechSynthesisUtterance(text);
+    let u=
+      new SpeechSynthesisUtterance(text);
 
-u.lang="fa-IR";
-u.rate=.9;
-u.pitch=1.15;
+    u.lang="fa-IR";
 
-speechSynthesis.speak(u);
+    u.rate=.9;
+
+    u.pitch=1.15;
+
+    speechSynthesis.speak(u);
+
+  }
 
 }
 
+
+/* شروع بازی */
+
+function startGame(){
+
+  let input=
+    document.getElementById("studentName");
+
+  studentName=
+    input.value.trim();
+
+  if(!studentName){
+
+    input.focus();
+
+    input.style.borderColor="#ff7f9f";
+
+    input.placeholder=
+      "لطفاً ابتدا نامت را بنویس 🌟";
+
+    setTimeout(()=>{
+
+      input.style.borderColor=
+        "rgba(86,214,255,.55)";
+
+    },1200);
+
+    sound("wrong");
+
+    return;
+
+  }
+
+  document.getElementById(
+    "playerDisplay"
+  ).textContent=studentName;
+
+  document.getElementById(
+    "playerFinalName"
+  ).textContent=studentName;
+
+  document.getElementById(
+    "startScreen"
+  ).classList.add("hidden");
+
+  sound("finish");
+
+  setTimeout(()=>{
+
+    speak(
+      "آفرین "+
+      studentName+
+      "! آماده‌ای؟ مأموریت فضایی را شروع کن!"
+    );
+
+  },250);
+
+  current=0;
+  score=0;
+
+  makeQuestions();
+
+  load();
+
 }
+
+
+/* Enter برای شروع */
+
+document
+  .getElementById("studentName")
+  .addEventListener(
+    "keydown",
+    function(e){
+
+      if(e.key==="Enter"){
+
+        startGame();
+
+      }
+
+    }
+  );
+
+
+document
+  .getElementById("startButton")
+  .onclick=startGame;
+
+
+/* نمایش سؤال */
 
 function load(){
 
-answered=false;
+  answered=false;
 
-let q=questions[current];
+  let q=questions[current];
 
-let word=q.before?"قبل از":"بعد از";
+  let word=
+    q.before?
+    "قبل از":
+    "بعد از";
 
-document.getElementById("question").innerHTML=
-word+" <strong>"+fa(q.number)+"</strong> کدام است؟";
+  document
+    .getElementById("question")
+    .innerHTML=
+      word+
+      " <strong>"+
+      fa(q.number)+
+      "</strong> کدام است؟";
 
-document.getElementById("option1").textContent=
-fa(q.options[0]);
+  document
+    .getElementById("option1")
+    .textContent=
+      fa(q.options[0]);
 
-document.getElementById("option2").textContent=
-fa(q.options[1]);
+  document
+    .getElementById("option2")
+    .textContent=
+      fa(q.options[1]);
 
-document.getElementById("option1").className="answer";
-document.getElementById("option2").className="answer";
+  document
+    .getElementById("option1")
+    .className="answer";
 
-document.getElementById("option1").disabled=false;
-document.getElementById("option2").disabled=false;
+  document
+    .getElementById("option2")
+    .className="answer";
 
-document.getElementById("feedback").textContent="";
-document.getElementById("feedback").className="feedback";
+  document
+    .getElementById("option1")
+    .disabled=false;
 
-document.getElementById("next").style.display="none";
+  document
+    .getElementById("option2")
+    .disabled=false;
 
-document.getElementById("progress").style.width=
-((current+1)/10*100)+"%";
+  document
+    .getElementById("feedback")
+    .textContent="";
 
-document.getElementById("score").textContent=fa(score);
+  document
+    .getElementById("feedback")
+    .className="feedback";
+
+  document
+    .getElementById("next")
+    .style.display="none";
+
+  document
+    .getElementById("progress")
+    .style.width=
+      ((current+1)/10*100)+"%";
+
+  document
+    .getElementById("score")
+    .textContent=
+      fa(score);
 
 }
+
+
+/* پاسخ */
 
 function answer(index){
 
-if(answered)return;
+  if(answered)return;
 
-answered=true;
+  answered=true;
 
-let q=questions[current];
+  let q=questions[current];
 
-let selected=
-index===0?
-document.getElementById("option1"):
-document.getElementById("option2");
+  let selected=
+    index===0?
+    document.getElementById("option1"):
+    document.getElementById("option2");
 
-let correctButton=
-q.correctIndex===0?
-document.getElementById("option1"):
-document.getElementById("option2");
+  let correctButton=
+    q.correctIndex===0?
+    document.getElementById("option1"):
+    document.getElementById("option2");
 
-document.getElementById("option1").disabled=true;
-document.getElementById("option2").disabled=true;
+  document
+    .getElementById("option1")
+    .disabled=true;
 
-if(index===q.correctIndex){
+  document
+    .getElementById("option2")
+    .disabled=true;
 
-score++;
 
-selected.classList.add("correct");
+  if(index===q.correctIndex){
 
-document.getElementById("feedback").textContent=
-"🚀 آفرین! درست گفتی!";
+    score++;
 
-document.getElementById("feedback").className=
-"feedback good";
+    selected
+      .classList
+      .add("correct");
 
-sound("correct");
-speak("آفرین! درست گفتی!");
+    document
+      .getElementById("feedback")
+      .textContent=
+        "🚀 آفرین "+
+        studentName+
+        "! درست گفتی! ⭐";
 
-}else{
+    document
+      .getElementById("feedback")
+      .className=
+        "feedback good";
 
-selected.classList.add("wrong");
-correctButton.classList.add("correct");
+    sound("correct");
 
-document.getElementById("feedback").textContent=
-"👾 اشکالی ندارد! دوباره تلاش کن";
+    speak(
+      "آفرین "+
+      studentName+
+      "! درست گفتی!"
+    );
 
-document.getElementById("feedback").className=
-"feedback bad";
+    createStars(12);
 
-sound("wrong");
-speak("اشکالی ندارد! دوباره تلاش کن");
+  }
+
+  else{
+
+    selected
+      .classList
+      .add("wrong");
+
+    correctButton
+      .classList
+      .add("correct");
+
+    document
+      .getElementById("feedback")
+      .textContent=
+        "👾 اشکالی ندارد "+
+        studentName+
+        "! دوباره تلاش کن.";
+
+    document
+      .getElementById("feedback")
+      .className=
+        "feedback bad";
+
+    sound("wrong");
+
+    speak(
+      "اشکالی ندارد. دوباره تلاش کن."
+    );
+
+  }
+
+  document
+    .getElementById("score")
+    .textContent=
+      fa(score);
+
+  document
+    .getElementById("next")
+    .style.display="block";
 
 }
 
-document.getElementById("score").textContent=fa(score);
 
-document.getElementById("next").style.display="block";
+/* انتخاب پاسخ */
 
-}
+document
+  .getElementById("option1")
+  .onclick=()=>{
+    answer(0);
+  };
 
-document.getElementById("option1").onclick=()=>{
-answer(0);
-};
+document
+  .getElementById("option2")
+  .onclick=()=>{
+    answer(1);
+  };
 
-document.getElementById("option2").onclick=()=>{
-answer(1);
-};
 
-document.getElementById("next").onclick=()=>{
+/* سؤال بعد */
 
-current++;
+document
+  .getElementById("next")
+  .onclick=()=>{
 
-if(current>=10){
+    current++;
 
-finish();
+    if(current>=10){
 
-}else{
+      finish();
 
-load();
+    }else{
 
-}
+      load();
 
-};
+    }
+
+  };
+
+
+/* پایان */
 
 function finish(){
 
-document.getElementById("gameScreen").style.display="none";
+  document
+    .getElementById("gameScreen")
+    .style.display="none";
 
-document.getElementById("end").style.display="flex";
+  document
+    .getElementById("end")
+    .style.display="flex";
 
-document.getElementById("finalScore").textContent=fa(score);
+  document
+    .getElementById("finalScore")
+    .textContent=
+      fa(score);
 
-let message;
+  let message;
 
-if(score===10){
+  if(score===10){
 
-message=
-"🌟 فوق‌العاده بود! 🌟<br>تو قهرمان کهکشان ریاضی هستی! 🚀";
+    message=
+      "🌟 فوق‌العاده بود "+
+      studentName+
+      "! 🌟<br>"+
+      "تو قهرمان کهکشان ریاضی هستی! 🚀";
 
-}else if(score>=8){
+  }
 
-message=
-"🎉 عالی بود!<br>ماموریت فضایی را خیلی خوب انجام دادی! 🚀";
+  else if(score>=8){
 
-}else if(score>=5){
+    message=
+      "🎉 عالی بود "+
+      studentName+
+      "!<br>"+
+      "مأموریت فضایی را خیلی خوب انجام دادی! 🚀";
 
-message=
-"⭐ آفرین قهرمان!<br>با کمی تمرین قوی‌تر می‌شوی!";
+  }
 
-}else{
+  else if(score>=5){
 
-message=
-"💙 خسته نباشی فضانورد!<br>دوباره تلاش کن و قوی‌تر برگرد! 🚀";
+    message=
+      "⭐ آفرین "+
+      studentName+
+      "!<br>"+
+      "با کمی تمرین قوی‌تر می‌شوی!";
+
+  }
+
+  else{
+
+    message=
+      "💙 خسته نباشی "+
+      studentName+
+      "!<br>"+
+      "دوباره تلاش کن و قوی‌تر برگرد! 🚀";
+
+  }
+
+  document
+    .getElementById("message")
+    .innerHTML=message;
+
+  sound("finish");
+
+  setTimeout(()=>{
+
+    speak(
+      score===10?
+      "آفرین قهرمان! تو قهرمان کهکشان ریاضی هستی!":
+      "آفرین قهرمان! خسته نباشی!"
+    );
+
+  },500);
+
+  confetti();
 
 }
 
-document.getElementById("message").innerHTML=message;
 
-sound("finish");
+/* ستاره هنگام پاسخ درست */
 
-setTimeout(()=>{
+function createStars(count){
 
-speak(
-score===10?
-"آفرین قهرمان! تو قهرمان کهکشان ریاضی هستی!":
-"آفرین قهرمان! خسته نباشی!"
-);
+  let symbols=[
+    "⭐",
+    "🌟",
+    "✨"
+  ];
 
-},400);
+  for(let i=0;i<count;i++){
 
-confetti();
+    let x=
+      document.createElement("div");
+
+    x.className="confetti";
+
+    x.textContent=
+      symbols[
+        Math.floor(
+          Math.random()*symbols.length
+        )
+      ];
+
+    x.style.left=
+      Math.random()*100+
+      "vw";
+
+    x.style.animationDelay=
+      Math.random()*
+      .7+
+      "s";
+
+    document.body.appendChild(x);
+
+    setTimeout(
+      ()=>x.remove(),
+      3800
+    );
+
+  }
 
 }
+
+
+/* جشن پایان */
 
 function confetti(){
 
-let symbols=["🚀","⭐","🌟","✨","🎉","🏆","🪐"];
+  let symbols=[
+    "🚀",
+    "⭐",
+    "🌟",
+    "✨",
+    "🎉",
+    "🏆",
+    "🪐",
+    "💫"
+  ];
 
-for(let i=0;i<35;i++){
+  for(let i=0;i<45;i++){
 
-let x=document.createElement("div");
+    let x=
+      document.createElement("div");
 
-x.className="confetti";
+    x.className="confetti";
 
-x.textContent=
-symbols[Math.floor(Math.random()*symbols.length)];
+    x.textContent=
+      symbols[
+        Math.floor(
+          Math.random()*symbols.length
+        )
+      ];
 
-x.style.left=Math.random()*100+"vw";
+    x.style.left=
+      Math.random()*100+
+      "vw";
 
-x.style.animationDelay=Math.random()*1.5+"s";
+    x.style.animationDelay=
+      Math.random()*1.5+
+      "s";
 
-document.body.appendChild(x);
+    document.body.appendChild(x);
 
-setTimeout(()=>x.remove(),4500);
+    setTimeout(
+      ()=>x.remove(),
+      4500
+    );
+
+  }
 
 }
 
-}
+
+/* بازی دوباره */
 
 function restart(){
 
-current=0;
-score=0;
+  current=0;
+  score=0;
 
-makeQuestions();
+  document
+    .getElementById("end")
+    .style.display="none";
 
-document.getElementById("end").style.display="none";
-document.getElementById("gameScreen").style.display="flex";
+  document
+    .getElementById("gameScreen")
+    .style.display="flex";
 
-load();
+  makeQuestions();
+
+  load();
+
+  sound("finish");
 
 }
 
-makeQuestions();
-load();
+
+/* جلوگیری از انتخاب متن */
+
+document.addEventListener(
+  "selectstart",
+  e=>{
+    if(
+      e.target.tagName!=="INPUT"
+    ){
+      e.preventDefault();
+    }
+  }
+);
 
 </script>
 
